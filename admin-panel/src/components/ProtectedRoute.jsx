@@ -1,9 +1,10 @@
 import { Navigate, Outlet } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
 
 export default function ProtectedRoute() {
-  const hasToken = localStorage.getItem('ticketbox-auth');
+  const token = useAuthStore((state) => state.token);
 
-  if (!hasToken) {
+  if (!token) {
     return <Navigate to="/login" replace />;
   }
 
