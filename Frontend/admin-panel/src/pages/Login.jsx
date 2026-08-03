@@ -9,27 +9,19 @@ import { api } from '../lib/api';
 export default function Login() {
   const navigate = useNavigate();
   const setAuth = useAuthStore((state) => state.setAuth);
-  
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const loginMutation = useMutation({
     mutationFn: async (credentials) => {
-      try {
-        const response = await api.post('/admin/login', credentials);
-        return response.data;
-      } catch (error) {
-        // Fallback mock login until backend is available
-        if (credentials.email === 'admin@ticketbox.com' && credentials.password === 'password') {
-          return { token: 'mock-jwt-token-123', user: { name: 'Admin', email: credentials.email } };
-        }
-        throw error;
-      }
+      const response = await api.post('/auth/login', credentials);
+      return response.data;
     },
     onSuccess: (data) => {
       setAuth(data.token, data.user);
       navigate('/');
-    }
+    },
   });
 
   const handleLogin = (e) => {
@@ -39,11 +31,10 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-deepPurple flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Decorative background blobs */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-electricViolet/30 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-hotPink/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-electricViolet/30 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-hotPink/20 rounded-full blur-3xl pointer-events-none" />
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -52,12 +43,13 @@ export default function Login() {
         <h2 className="mt-6 text-center text-5xl font-extrabold text-gradient tracking-wider pb-2">
           TicketBox
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-300">
-          Admin Portal Login
+        <p className="mt-2 text-center text-sm text-gray-300">Admin Portal Login</p>
+        <p className="mt-1 text-center text-xs text-gray-500">
+          admin@ticketbox.local / Admin@12345
         </p>
       </motion.div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
@@ -81,7 +73,7 @@ export default function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="block w-full pl-10 sm:text-sm bg-white/5 border border-white/10 rounded-xl py-3 text-white placeholder-gray-500 focus:ring-electricViolet focus:border-electricViolet transition-colors"
-                  placeholder="admin@ticketbox.com"
+                  placeholder="admin@ticketbox.local"
                 />
               </div>
             </div>
@@ -99,6 +91,7 @@ export default function Login() {
                   name="password"
                   type="password"
                   required
+                  minLength={8}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="block w-full pl-10 sm:text-sm bg-white/5 border border-white/10 rounded-xl py-3 text-white placeholder-gray-500 focus:ring-electricViolet focus:border-electricViolet transition-colors"
@@ -120,7 +113,7 @@ export default function Login() {
                 )}
               </button>
             </div>
-            
+
             {loginMutation.isError && (
               <div className="text-red-400 text-sm text-center mt-2 font-medium">
                 Invalid credentials
