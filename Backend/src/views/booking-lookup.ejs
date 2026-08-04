@@ -1,25 +1,41 @@
-<section class="booking-lookup">
-  <header class="booking-lookup__intro">
-    <h1 class="booking-lookup__title">Find my booking</h1>
-    <p class="booking-lookup__lede">Enter your ticket code and email.</p>
-  </header>
-
-  <!-- Day 4–5: wire to GET /bookings/:ticket_code -->
-  <form class="booking-lookup__form" method="get" action="/bookings/lookup">
-    <label class="field">
-      <span class="field__label">Ticket code</span>
-      <input class="field__input" type="text" name="ticket_code" required autocomplete="off">
-    </label>
-
-    <label class="field">
-      <span class="field__label">Email</span>
-      <input class="field__input" type="email" name="email" required autocomplete="email">
-    </label>
-
-    <button class="btn btn--primary" type="submit">Look up</button>
-  </form>
-
-  <% if (typeof message !== 'undefined' && message) { %>
-    <p class="booking-lookup__message"><%= message %></p>
-  <% } %>
-</section>
+<section class="booking-lookup">
+  <header class="booking-lookup__intro">
+    <h1 class="booking-lookup__title">Find Your Booking</h1>
+    <p class="booking-lookup__lede">Enter your ticket code and email to retrieve your booking.</p>
+  </header>
+
+  <form class="booking-lookup__form" method="get" action="/bookings/lookup">
+    <label class="field">
+      <span class="field__label">Ticket Code</span>
+      <div class="input-glow" style="position:relative;border-radius:0.5rem;">
+        <span class="material-symbols-outlined" style="position:absolute;left:0.5rem;top:50%;transform:translateY(-50%);color:var(--color-text-secondary);font-size:20px;">confirmation_number</span>
+        <input class="field__input field__input--mono" style="padding-left:2.5rem;" type="text" name="ticket_code" required autocomplete="off" placeholder="e.g. TX-9482-XYZ">
+      </div>
+    </label>
+
+    <label class="field">
+      <span class="field__label">Email Address</span>
+      <div class="input-glow" style="position:relative;border-radius:0.5rem;">
+        <span class="material-symbols-outlined" style="position:absolute;left:0.5rem;top:50%;transform:translateY(-50%);color:var(--color-text-secondary);font-size:20px;">mail</span>
+        <input class="field__input" style="padding-left:2.5rem;" type="email" name="email" required autocomplete="email" placeholder="you@example.com">
+      </div>
+    </label>
+
+    <button class="btn btn-primary btn-wide" type="submit">
+      <span class="material-symbols-outlined" style="font-size:20px;margin-right:0.5rem;">search</span>
+      Search Booking
+    </button>
+  </form>
+
+  <% if (typeof message !== 'undefined' && message) { %>
+    <p class="booking-lookup__message"><%= message %></p>
+  <% } else { %>
+    <div class="booking-lookup__empty">
+      <div class="booking-lookup__empty-icon">
+        <span class="material-symbols-outlined" style="font-size:32px;">receipt_long</span>
+      </div>
+      <p class="home__empty-title">No booking found yet</p>
+      <p class="home__empty-text">Enter your details above to view your event ticket and status.</p>
+    </div>
+  <% } %>
+</section>

@@ -12,7 +12,7 @@ router.get('/bookings/lookup', (req, res) => {
 
   res.render('booking-lookup', {
     title: 'My booking',
-    bodyClass: 'page--booking-lookup',
+    bodyClass: 'page--lookup',
     message,
   });
 });
