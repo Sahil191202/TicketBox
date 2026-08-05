@@ -1,6 +1,12 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 
+function headerSearchPlaceholder(pathname) {
+  if (pathname.startsWith('/bookings')) return 'Search bookings by name or email...';
+  if (pathname.startsWith('/webhooks')) return 'Search webhook events...';
+  return 'Search events...';
+}
+
 const NAV_ICONS = {
   Dashboard: 'dashboard',
   Events: 'calendar_today',
@@ -89,7 +95,7 @@ export default function Layout() {
             <input
               type="text"
               className="w-full h-[40px] pl-[40px] pr-md rounded-full bg-transparent text-on-surface font-body-sm text-body-sm placeholder:text-on-surface-variant/60 focus:outline-none"
-              placeholder="Search events..."
+              placeholder={headerSearchPlaceholder(location.pathname)}
               readOnly
             />
           </div>
