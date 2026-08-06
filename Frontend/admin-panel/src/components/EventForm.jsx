@@ -27,6 +27,8 @@ const eventSchema = z.object({
 export default function EventForm({ initialData, onSubmit, isSubmitting, isEdit = false }) {
   const [showConfetti, setShowConfetti] = useState(false);
   const [slugTouched, setSlugTouched] = useState(isEdit);
+  const [bannerPreview, setBannerPreview] = useState(initialData?.bannerPreview || null);
+  const [bannerName, setBannerName] = useState('');
 
   const {
     register,
@@ -47,6 +49,7 @@ export default function EventForm({ initialData, onSubmit, isSubmitting, isEdit 
   });
 
   const titleValue = watch('title');
+  const bannerField = register('banner');
 
   useEffect(() => {
     if (!slugTouched && titleValue) {
@@ -56,7 +59,9 @@ export default function EventForm({ initialData, onSubmit, isSubmitting, isEdit 
 
   const handleFormSubmit = async (data) => {
     try {
-      await onSubmit(data);
+      const fileList = data.banner;
+      const file = fileList?.[0] || null;
+      await onSubmit({ ...data, bannerFile: file });
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 2500);
     } catch {
@@ -160,24 +165,51 @@ export default function EventForm({ initialData, onSubmit, isSubmitting, isEdit 
             <span className="input-label">Banner Image</span>
             <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed border-outline-variant rounded-xl hover:border-primary-container/50 transition-colors bg-surface-container-low">
               <div className="space-y-1 text-center">
-                <span className="material-symbols-outlined mx-auto text-[40px] text-on-surface-variant">upload</span>
+                {bannerPreview ? (
+                  <img
+                    src={bannerPreview}
+                    alt="Banner preview"
+                    className="mx-auto mb-3 h-28 w-full max-w-xs object-cover rounded-lg"
+                  />
+                ) : (
+                  <span className="material-symbols-outlined mx-auto text-[40px] text-on-surface-variant">
+                    upload
+                  </span>
+                )}
                 <div className="flex text-sm text-on-surface-variant justify-center">
                   <label
                     htmlFor="banner"
                     className="relative cursor-pointer font-medium text-primary hover:text-surface-tint"
                   >
-                    <span>Upload a file</span>
+                    <span>{bannerName || 'Upload a file'}</span>
                     <input
                       id="banner"
                       type="file"
                       className="sr-only"
-                      {...register('banner')}
-                      accept="image/jpeg, image/png"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      name={bannerField.name}
+                      ref={bannerField.ref}
+                      onBlur={bannerField.onBlur}
+                      onChange={(e) => {
+                        bannerField.onChange(e);
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setBannerName(file.name);
+                          setBannerPreview(URL.createObjectURL(file));
+                        }
+                      }}
                     />
                   </label>
                   <p className="pl-1">or drag and drop</p>
                 </div>
-                <p className="text-xs text-on-surface-variant">PNG, JPG up to 5MB · S3 upload comes Day 5</p>
+                <p className="text-xs text-on-surface-variant">
+                  PNG, JPG up to 5MB · uploaded to S3 via presigned URL
+                </p>
+                {initialData?.banner_key && !bannerName && (
+                  <p className="text-xs text-tertiary font-code-ticket">
+                    Current: {initialData.banner_key}
+                  </p>
+                )}
               </div>
             </div>
           </div>

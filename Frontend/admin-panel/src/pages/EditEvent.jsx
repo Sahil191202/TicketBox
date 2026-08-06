@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import EventForm from '../components/EventForm';
 import { api, toPaise, toRupees, toIso, toDatetimeLocal } from '../lib/api';
+import { uploadBannerFile } from '../lib/uploadBanner';
 
 export default function EditEvent() {
   const { id } = useParams();
@@ -25,16 +26,23 @@ export default function EditEvent() {
         price: toRupees(found.price_paise),
         totalSeats: found.total_seats,
         date: toDatetimeLocal(found.starts_at),
+        banner_key: found.banner_key || null,
       };
     },
   });
 
   const updateMutation = useMutation({
     mutationFn: async (formData) => {
+      let banner_key = event?.banner_key || null;
+      if (formData.bannerFile) {
+        banner_key = await uploadBannerFile(formData.bannerFile);
+      }
+
       const payload = {
         slug: formData.slug,
         title: formData.title,
         description: formData.description || null,
+        banner_key,
         price_paise: toPaise(formData.price),
         total_seats: formData.totalSeats,
         starts_at: toIso(formData.date),
@@ -50,7 +58,8 @@ export default function EditEvent() {
     },
     onError: (err) => {
       toast.error(
-        err.response?.data?.error ||
+        err.message ||
+          err.response?.data?.error ||
           err.response?.data?.details?.[0] ||
           'Failed to update event'
       );
@@ -73,7 +82,9 @@ export default function EditEvent() {
 
   return (
     <div>
-      <h1 className="font-headline-md text-headline-md font-bold text-on-surface mb-lg">Edit Event</h1>
+      <h1 className="font-headline-md text-headline-md font-bold text-on-surface mb-lg">
+        Edit Event
+      </h1>
       <div className="admin-card p-xl">
         <EventForm
           initialData={event}
