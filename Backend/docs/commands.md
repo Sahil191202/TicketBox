@@ -91,13 +91,30 @@ cloudflared tunnel --url http://localhost:4000
 # - Block public access OFF for banners OR use CloudFront later
 # - IAM user with s3:PutObject on arn:aws:s3:::ticketbox-banners/banners/*
 # - Put AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / S3_BUCKET_NAME in .env
-# - Optional: S3_PUBLIC_BASE_URL=... (not required for EJS; web uses /media proxy)
-# - IAM also needs s3:GetObject on banners/* so the EJS /media proxy can serve images
-
-# 4) Optional S3 bucket CORS (only if using browser → S3 presigned PUT)
-# Admin SPA uses POST /admin/upload instead, so CORS is usually not needed.
-# npm run s3:cors
+# - Optional: S3_PUBLIC_BASE_URL=https://ticketbox-banners.s3.ap-south-1.amazonaws.com
 
 # Demo proof: start payment, close browser tab mid-flow → booking still becomes paid via webhook
 ```
 
+## Day 6 (EC2 — mostly AWS Console + SSH)
+
+```bash
+# Local
+chmod 400 ticketbox-key.pem
+ssh -i ticketbox-key.pem ubuntu@<EC2_PUBLIC_IP>
+
+# On server (after cloning/copying repo)
+export DB_PASSWORD='strong-password'
+bash infra/scripts/day6-bootstrap.sh
+
+# Verify
+free -m
+sudo systemctl status postgresql
+sudo ufw status
+
+# Add Sahil user, then harden SSH last
+# bash infra/scripts/04-add-ssh-user.sh
+# bash infra/scripts/03-harden-ssh.sh
+```
+
+Full checklist: `docs/DAY6_EC2.md`
