@@ -101,3 +101,46 @@ cloudflared tunnel --url http://localhost:4000
 # Demo proof: start payment, close browser tab mid-flow → booking still becomes paid via webhook
 ```
 
+## Day 6 (Week 2) — SSH / SFTP / first dist upload
+
+```bash
+# --- Local: build admin for EC2 ---
+cd Frontend/admin-panel
+copy .env.production.example .env.production
+# Edit VITE_API_URL=http://YOUR_EC2_PUBLIC_IP:4000
+npm ci
+npm run build
+# dist/ → upload contents to /var/www/admin
+
+# From repo root (Windows) — build + zip for FileZilla
+npm run package:admin
+# → deploy/artifacts/admin-dist.zip
+
+# --- Key permissions (required) ---
+chmod 400 ~/keys/ticketbox.pem
+# Windows OpenSSH:
+#   icacls ticketbox.pem /inheritance:r
+#   icacls ticketbox.pem /grant:r "%USERNAME%:R"
+
+# --- SSH ---
+ssh -i ~/keys/ticketbox.pem ubuntu@YOUR_EC2_PUBLIC_IP
+
+# --- First-time dirs on server ---
+sudo mkdir -p /var/www/admin
+sudo chown -R ubuntu:ubuntu /var/www/admin
+sudo chmod -R u+rwX,go+rX /var/www/admin
+
+# --- FileZilla ---
+# Protocol: SFTP | Host: EC2_IP | Port: 22 | Key file: ticketbox.pem | User: ubuntu
+# Remote: /var/www/admin  ← upload dist/ CONTENTS (index.html at top level)
+
+# --- Verify ---
+ls -la /var/www/admin
+test -f /var/www/admin/index.html && echo OK
+
+# Checkpoint: Sahil + Ram can both SSH/SFTP without help.
+# Day 7 = enable deploy/nginx/admin.conf + fix VITE_API_URL/CORS on live IP.
+```
+
+See also: `deploy/README.md`, `deploy/sftp-checklist.md`.
+

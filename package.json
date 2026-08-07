@@ -1,0 +1,9 @@
+{
+  "name": "ticketbox-monorepo",
+  "private": true,
+  "description": "TicketBox — root scripts for Week 2 deploy packaging",
+  "scripts": {
+    "build:admin": "npm --prefix Frontend/admin-panel run build",
+    "package:admin": "powershell -ExecutionPolicy Bypass -File scripts/package-admin-dist.ps1"
+  }
+}

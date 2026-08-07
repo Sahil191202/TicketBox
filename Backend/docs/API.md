@@ -297,4 +297,7 @@ Response `201`:
 
 ---
 
-*Day 5 complete for Week 1 API surface. Week 2 = EC2 / nginx / domain / SSL.*
+*Day 5 complete for Week 1 API surface.*  
+*Week 2: Day 6 SSH/SFTP + first `dist/` upload · Day 7 nginx + CORS · Day 8 DNS · Day 9 HTTPS.*  
+*Deploy scaffolding: `/deploy` (see `deploy/README.md`).*
+
