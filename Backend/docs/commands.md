@@ -91,56 +91,30 @@ cloudflared tunnel --url http://localhost:4000
 # - Block public access OFF for banners OR use CloudFront later
 # - IAM user with s3:PutObject on arn:aws:s3:::ticketbox-banners/banners/*
 # - Put AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / S3_BUCKET_NAME in .env
-# - Optional: S3_PUBLIC_BASE_URL=... (not required for EJS; web uses /media proxy)
-# - IAM also needs s3:GetObject on banners/* so the EJS /media proxy can serve images
-
-# 4) Optional S3 bucket CORS (only if using browser → S3 presigned PUT)
-# Admin SPA uses POST /admin/upload instead, so CORS is usually not needed.
-# npm run s3:cors
+# - Optional: S3_PUBLIC_BASE_URL=https://ticketbox-banners.s3.ap-south-1.amazonaws.com
 
 # Demo proof: start payment, close browser tab mid-flow → booking still becomes paid via webhook
 ```
 
-## Day 6 (Week 2) — SSH / SFTP / first dist upload
+## Day 6 (EC2 — mostly AWS Console + SSH)
 
 ```bash
-# --- Local: build admin for EC2 ---
-cd Frontend/admin-panel
-copy .env.production.example .env.production
-# Edit VITE_API_URL=http://YOUR_EC2_PUBLIC_IP:4000
-npm ci
-npm run build
-# dist/ → upload contents to /var/www/admin
+# Local
+chmod 400 ticketbox-key.pem
+ssh -i ticketbox-key.pem ubuntu@<EC2_PUBLIC_IP>
 
-# From repo root (Windows) — build + zip for FileZilla
-npm run package:admin
-# → deploy/artifacts/admin-dist.zip
+# On server (after cloning/copying repo)
+export DB_PASSWORD='strong-password'
+bash infra/scripts/day6-bootstrap.sh
 
-# --- Key permissions (required) ---
-chmod 400 ~/keys/ticketbox.pem
-# Windows OpenSSH:
-#   icacls ticketbox.pem /inheritance:r
-#   icacls ticketbox.pem /grant:r "%USERNAME%:R"
+# Verify
+free -m
+sudo systemctl status postgresql
+sudo ufw status
 
-# --- SSH ---
-ssh -i ~/keys/ticketbox.pem ubuntu@YOUR_EC2_PUBLIC_IP
-
-# --- First-time dirs on server ---
-sudo mkdir -p /var/www/admin
-sudo chown -R ubuntu:ubuntu /var/www/admin
-sudo chmod -R u+rwX,go+rX /var/www/admin
-
-# --- FileZilla ---
-# Protocol: SFTP | Host: EC2_IP | Port: 22 | Key file: ticketbox.pem | User: ubuntu
-# Remote: /var/www/admin  ← upload dist/ CONTENTS (index.html at top level)
-
-# --- Verify ---
-ls -la /var/www/admin
-test -f /var/www/admin/index.html && echo OK
-
-# Checkpoint: Sahil + Ram can both SSH/SFTP without help.
-# Day 7 = enable deploy/nginx/admin.conf + fix VITE_API_URL/CORS on live IP.
+# Add Sahil user, then harden SSH last
+# bash infra/scripts/04-add-ssh-user.sh
+# bash infra/scripts/03-harden-ssh.sh
 ```
 
-See also: `deploy/README.md`, `deploy/sftp-checklist.md`.
-
+Full checklist: `docs/DAY6_EC2.md`
