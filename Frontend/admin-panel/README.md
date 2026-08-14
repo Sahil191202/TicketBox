@@ -25,4 +25,5 @@ npm run build
 
 Upload **`dist/` contents** to EC2 path **`/var/www/admin`**.
 
-Full Day 6 SSH/SFTP checklist: [`../../deploy/README.md`](../../deploy/README.md)
+- Day 6 SSH/SFTP: [`../../deploy/README.md`](../../deploy/README.md)
+- Day 7 nginx + CORS: [`../../deploy/day-7.md`](../../deploy/day-7.md)

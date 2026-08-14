@@ -1,12 +1,6 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 
-function headerSearchPlaceholder(pathname) {
-  if (pathname.startsWith('/bookings')) return 'Search bookings by name or email...';
-  if (pathname.startsWith('/webhooks')) return 'Search webhook events...';
-  return 'Search events...';
-}
-
 const NAV_ICONS = {
   Dashboard: 'dashboard',
   Events: 'calendar_today',
@@ -87,32 +81,7 @@ export default function Layout() {
       </nav>
 
       <div className="flex flex-col flex-1 md:ml-64 min-w-0">
-        <header className="sticky top-0 z-50 bg-surface border-b border-outline-variant flex items-center justify-between px-lg h-14">
-          <div className="relative flex items-center input-glow rounded-full border border-outline-variant bg-surface-container-lowest flex-1 max-w-md">
-            <span className="material-symbols-outlined text-on-surface-variant absolute left-sm text-[20px]">
-              search
-            </span>
-            <input
-              type="text"
-              className="w-full h-[40px] pl-[40px] pr-md rounded-full bg-transparent text-on-surface font-body-sm text-body-sm placeholder:text-on-surface-variant/60 focus:outline-none"
-              placeholder={headerSearchPlaceholder(location.pathname)}
-              readOnly
-            />
-          </div>
-          <div className="flex items-center gap-sm ml-md">
-            <button type="button" className="p-sm text-on-surface-variant hover:text-on-surface transition-colors" aria-label="Notifications">
-              <span className="material-symbols-outlined text-[22px]">notifications</span>
-            </button>
-            <button type="button" className="p-sm text-on-surface-variant hover:text-on-surface transition-colors" aria-label="Settings">
-              <span className="material-symbols-outlined text-[22px]">settings</span>
-            </button>
-            <Link to="/events/create" className="hidden sm:inline-flex btn-admin-cta !w-auto px-lg">
-              + Create Event
-            </Link>
-          </div>
-        </header>
-
-        <main className="flex-1 p-lg md:p-xl bg-surface overflow-y-auto">
+        <main className="flex-1 p-lg md:p-xl bg-surface overflow-y-auto min-h-screen">
           <div className="animate-fade-up">
             <Outlet />
           </div>

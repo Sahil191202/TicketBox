@@ -115,11 +115,14 @@ Optional Day 6 report artifact (PRD §2.3.1):
 
 | Path | Purpose |
 |---|---|
-| `README.md` | This guide |
+| `README.md` | This guide (Day 6) |
 | `sftp-checklist.md` | Tick-box Day 6 checklist |
-| `nginx/admin.conf` | SPA site stub (**enable on Day 7**) |
-| `nginx/api.conf` | API reverse-proxy stub (**Day 7+**) |
-| `nginx/web.conf` | Public EJS reverse-proxy stub (**Day 7+**) |
+| `day-7.md` | nginx SPA + CORS on EC2 IP |
+| `nginx-checklist.md` | Tick-box Day 7 checklist |
+| `scripts/enable-admin-nginx.sh` | One-shot enable admin nginx site |
+| `nginx/admin.conf` | SPA site (**enable on Day 7**) |
+| `nginx/api.conf` | API reverse-proxy stub (**Day 7+ / Day 8**) |
+| `nginx/web.conf` | Public EJS reverse-proxy stub (**Day 7+ / Day 8**) |
 | `pm2/ecosystem.config.cjs` | API + web process file (Ram / paired) |
 | `artifacts/` | Built zip output (gitignored) |
 
@@ -127,7 +130,12 @@ Optional Day 6 report artifact (PRD §2.3.1):
 
 ## Day 7 preview (do not block Day 6)
 
-1. Copy `nginx/admin.conf` → `/etc/nginx/sites-available/admin`
-2. `sudo ln -s ... sites-enabled/` + `sudo nginx -t` + reload
-3. Open `http://YOUR_EC2_PUBLIC_IP` — admin SPA
-4. Ram adds `ADMIN_ORIGIN=http://YOUR_EC2_PUBLIC_IP` to API CORS
+Full guide: **[`day-7.md`](./day-7.md)** · checklist: **[`nginx-checklist.md`](./nginx-checklist.md)**
+
+1. Rebuild admin with `VITE_API_URL=http://YOUR_EC2_PUBLIC_IP:4000` and re-upload `dist/`
+2. Open SG ports **80** + **4000**
+3. Copy `nginx/admin.conf` → sites-available, disable default site, `nginx -t` + reload
+4. Set `ADMIN_ORIGIN=http://YOUR_EC2_PUBLIC_IP` on API and restart
+5. Open `http://YOUR_EC2_PUBLIC_IP` — admin SPA + working login
+
+**Day 7 stop:** SPA on port 80 + CORS OK. No DNS, no certbot yet.

@@ -1,10 +1,11 @@
 <section class="booking-lookup">
-  <header class="booking-lookup__intro">
+  <header class="booking-lookup__intro reveal">
+    <p class="tag-category">My Bookings</p>
     <h1 class="booking-lookup__title">Find Your Booking</h1>
     <p class="booking-lookup__lede">Enter your ticket code and email to retrieve your booking.</p>
   </header>
 
-  <form class="booking-lookup__form" method="post" action="/bookings/lookup">
+  <form class="booking-lookup__form reveal reveal--delay" method="post" action="/bookings/lookup">
     <label class="field">
       <span class="field__label">Ticket Code</span>
       <div class="input-glow field__input-wrap">
@@ -44,18 +45,22 @@
   </form>
 
   <% if (message) { %>
-    <p class="booking-lookup__message" role="alert"><%= message %></p>
+    <p class="booking-lookup__message reveal" role="alert"><%= message %></p>
   <% } %>
 
   <% if (booking) { %>
-    <div class="booking-lookup__result ticket-card">
+    <div class="booking-lookup__result ticket-card reveal">
+      <div class="ticket-card__banner<%= bannerUrl(booking.banner_key) ? '' : ' ticket-card__banner--placeholder' %>">
+        <% if (bannerUrl(booking.banner_key)) { %>
+          <img src="<%= bannerUrl(booking.banner_key) %>" alt="" class="ticket-card__banner-img">
+        <% } %>
+        <span class="tag-category ticket-card__banner-tag">Found</span>
+      </div>
       <div class="ticket-card__body">
         <p class="ticket-code__label">Ticket Code</p>
         <p class="ticket-code__value"><%= booking.ticket_code %></p>
-        <h2 class="ticket-card__event-title" style="margin-top:1rem;"><%= booking.title %></h2>
-        <p class="font-body-sm" style="color:var(--c-text-muted);margin-bottom:1rem;">
-          <%= formatDate(booking.starts_at) %>
-        </p>
+        <h2 class="ticket-card__event-title"><%= booking.title %></h2>
+        <p class="booking-lookup__date"><%= formatDate(booking.starts_at) %></p>
         <div class="ticket-card__meta-grid">
           <div>
             <p class="ticket-meta__label">Quantity</p>
@@ -74,13 +79,13 @@
             </p>
           </div>
         </div>
-        <p style="margin-top:1.25rem;">
+        <p class="booking-lookup__cta">
           <a class="btn btn-primary" href="/bookings/<%= booking.ticket_code %>">Open confirmation page</a>
         </p>
       </div>
     </div>
   <% } else if (!message) { %>
-    <div class="booking-lookup__empty">
+    <div class="booking-lookup__empty reveal">
       <div class="booking-lookup__empty-icon">
         <span class="material-symbols-outlined" style="font-size:32px;">receipt_long</span>
       </div>

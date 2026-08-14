@@ -1,12 +1,15 @@
 <section class="confirmation">
-  <div class="confirmation__icon" aria-hidden="true">
+  <div class="confirmation__icon reveal" aria-hidden="true">
     <span class="material-symbols-outlined filled" style="font-size:32px;color:#fff;">check</span>
   </div>
-  <h1 class="confirmation__title">Booking Confirmed!</h1>
-  <p class="confirmation__sub">Your ticket is ready. Keep this code safe.</p>
+  <h1 class="confirmation__title reveal">Booking Confirmed!</h1>
+  <p class="confirmation__sub reveal">Your ticket is ready. Keep this code safe.</p>
 
-  <article class="ticket-card">
-    <div class="ticket-card__banner">
+  <article class="ticket-card reveal reveal--delay">
+    <div class="ticket-card__banner<%= bannerUrl(booking.banner_key) ? '' : ' ticket-card__banner--placeholder' %>">
+      <% if (bannerUrl(booking.banner_key)) { %>
+        <img src="<%= bannerUrl(booking.banner_key) %>" alt="" class="ticket-card__banner-img">
+      <% } %>
       <span class="tag-category ticket-card__banner-tag">Event Ticket</span>
     </div>
     <div class="ticket-card__body">
@@ -56,7 +59,7 @@
     </div>
   </article>
 
-  <div class="confirmation__actions">
+  <div class="confirmation__actions reveal">
     <a class="btn btn-primary" href="/bookings/lookup">Find Booking</a>
     <a class="btn btn-ghost" href="/">Back to Home</a>
   </div>

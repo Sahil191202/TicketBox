@@ -144,3 +144,38 @@ test -f /var/www/admin/index.html && echo OK
 
 See also: `deploy/README.md`, `deploy/sftp-checklist.md`.
 
+## Day 7 (Week 2) — nginx admin SPA + CORS on EC2 IP
+
+```bash
+# --- Local: rebuild SPA against live API ---
+cd Frontend/admin-panel
+copy .env.production.example .env.production
+# VITE_API_URL=http://YOUR_EC2_PUBLIC_IP:4000
+npm ci
+npm run build
+# Re-upload dist/ contents → /var/www/admin (FileZilla)
+
+# --- EC2 security group ---
+# Inbound: 22, 80, 4000
+
+# --- On server ---
+sudo apt update && sudo apt install -y nginx
+# Copy deploy/nginx/admin.conf → /etc/nginx/sites-available/ticketbox-admin
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo ln -sf /etc/nginx/sites-available/ticketbox-admin /etc/nginx/sites-enabled/ticketbox-admin
+sudo nginx -t && sudo systemctl reload nginx
+
+# Or:
+# bash deploy/scripts/enable-admin-nginx.sh
+
+# --- API .env on server ---
+# ADMIN_ORIGIN=http://YOUR_EC2_PUBLIC_IP
+# API_PUBLIC_URL=http://YOUR_EC2_PUBLIC_IP:4000
+pm2 restart ticketbox-api
+
+# Browser: http://YOUR_EC2_PUBLIC_IP  → admin login, no CORS errors
+# Checkpoint: SPA on :80 + API CORS OK. Stop before Route 53 / HTTPS (Days 8–9).
+```
+
+See also: `deploy/day-7.md`, `deploy/nginx-checklist.md`.
+

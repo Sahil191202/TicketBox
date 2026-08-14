@@ -55,9 +55,17 @@ async function getBySlug(slug) {
   return withSeatsLeft(event);
 }
 
-async function listAdmin({ page, limit }) {
+async function listAdmin({ page, limit, status, q }) {
   const offset = (page - 1) * limit;
-  const base = db('events').whereNull('deleted_at');
+  let base = db('events').whereNull('deleted_at');
+
+  if (status) base = base.where({ status });
+  if (q) {
+    const like = `%${q}%`;
+    base = base.andWhere((builder) => {
+      builder.whereILike('title', like).orWhereILike('slug', like);
+    });
+  }
 
   const [{ count }] = await base.clone().count({ count: '*' });
   const rows = await base

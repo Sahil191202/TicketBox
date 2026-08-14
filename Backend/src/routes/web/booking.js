@@ -43,7 +43,8 @@ router.post(
         'b.status',
         'e.title',
         'e.slug',
-        'e.starts_at'
+        'e.starts_at',
+        'e.banner_key'
       )
       .whereRaw('LOWER(b.email) = ?', [email])
       .andWhere({ 'b.ticket_code': ticketCode })
@@ -86,7 +87,8 @@ router.get(
         'b.status',
         'e.title',
         'e.slug',
-        'e.starts_at'
+        'e.starts_at',
+        'e.banner_key'
       )
       .where({ 'b.ticket_code': req.params.ticket_code })
       .first();

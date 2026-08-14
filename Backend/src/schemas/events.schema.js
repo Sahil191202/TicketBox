@@ -30,8 +30,16 @@ const paginationSchema = Joi.object({
   limit: Joi.number().integer().min(1).max(100).default(20),
 });
 
+const adminEventsQuerySchema = Joi.object({
+  page: Joi.number().integer().min(1).default(1),
+  limit: Joi.number().integer().min(1).max(100).default(20),
+  status: Joi.string().valid('draft', 'published'),
+  q: Joi.string().trim().max(255).allow(''),
+});
+
 module.exports = {
   createEventSchema,
   updateEventSchema,
   paginationSchema,
+  adminEventsQuerySchema,
 };
