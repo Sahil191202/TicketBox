@@ -150,3 +150,18 @@ bash infra/scripts/08-print-domain-env.sh
 
 Full checklist: `docs/DAY8_EC2.md`  
 Sahil side: monorepo `deploy/day-8.md`, `deploy/dns-checklist.md`
+
+## Day 9 (HTTPS + live webhook + payment)
+
+```bash
+export DOMAIN=yourdomain.com
+export CERTBOT_EMAIL=you@example.com
+bash infra/scripts/09-certbot-ssl.sh
+bash infra/scripts/10-print-https-env.sh
+# Update .env to https:// → pm2 restart all
+# Razorpay webhook → https://api.DOMAIN/webhooks/razorpay
+# Rebuild admin: VITE_API_URL=https://api.DOMAIN
+```
+
+Full checklist: `docs/DAY9_EC2.md`  
+Sahil side: monorepo `deploy/day-9.md`, `deploy/https-checklist.md`
