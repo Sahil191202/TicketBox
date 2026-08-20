@@ -5,12 +5,12 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-SRC="$ROOT/deploy/nginx/admin.conf"
+SRC="$ROOT/deploy/nginx/admin-ip.conf"
 DEST_AVAIL="/etc/nginx/sites-available/ticketbox-admin"
 DEST_ENABLED="/etc/nginx/sites-enabled/ticketbox-admin"
 
 if [[ ! -f "$SRC" ]]; then
-  echo "Missing $SRC — run from a checkout that includes deploy/nginx/admin.conf"
+  echo "Missing $SRC — run from a checkout that includes deploy/nginx/admin-ip.conf"
   exit 1
 fi
 

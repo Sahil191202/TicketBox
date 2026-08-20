@@ -4,7 +4,7 @@
 
 | In this repo | On the live EC2 |
 |---|---|
-| `nginx/admin.conf` ready | Install/enable nginx site |
+| `nginx/admin.conf` / `admin-ip.conf` ready | Install/enable nginx site |
 | CORS supports EC2 admin origin | Set `ADMIN_ORIGIN` on API `.env` |
 | Rebuild notes for `VITE_API_URL` | Security group: **80** + **4000** open |
 
@@ -76,7 +76,7 @@ sudo systemctl start nginx
 Copy the repo file onto the server (SFTP the conf, or paste). Example if the repo lives at `~/ticketbox`:
 
 ```bash
-sudo cp ~/ticketbox/deploy/nginx/admin.conf /etc/nginx/sites-available/ticketbox-admin
+sudo cp ~/ticketbox/deploy/nginx/admin-ip.conf /etc/nginx/sites-available/ticketbox-admin
 
 # Disable Ubuntu default site (avoids competing for port 80)
 sudo rm -f /etc/nginx/sites-enabled/default
@@ -147,3 +147,5 @@ Day 7 ends when:
 - you did **not** need a custom domain or HTTPS yet
 
 Next: **Day 8** = Route 53 / hostnames · **Day 9** = certbot + HTTPS.
+
+Day 8 guide: [`day-8.md`](./day-8.md)

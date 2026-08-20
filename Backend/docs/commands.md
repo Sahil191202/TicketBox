@@ -148,4 +148,5 @@ bash infra/scripts/08-print-domain-env.sh
 # dig yourdomain.com +short
 ```
 
-Full checklist: `docs/DAY8_EC2.md`
+Full checklist: `docs/DAY8_EC2.md`  
+Sahil side: monorepo `deploy/day-8.md`, `deploy/dns-checklist.md`
