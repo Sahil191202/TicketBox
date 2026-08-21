@@ -121,8 +121,12 @@ Optional Day 6 report artifact (PRD §2.3.1):
 | `nginx-checklist.md` | Tick-box Day 7 checklist |
 | `day-8.md` | Route 53 + Elastic IP + hostname nginx |
 | `dns-checklist.md` | Tick-box Day 8 checklist |
+| `day-9.md` | certbot HTTPS + live webhook/payment |
+| `https-checklist.md` | Tick-box Day 9 checklist |
 | `scripts/enable-admin-nginx.sh` | Day 7 — IP-only admin site |
 | `scripts/enable-domain-nginx.sh` | Day 8 — apex / api / app vhosts |
+| `scripts/certbot-ssl.sh` | Day 9 — wrapper → Backend certbot script |
+| `scripts/print-https-env.sh` | Day 9 — wrapper → HTTPS env printout |
 | `nginx/admin-ip.conf` | Day 7 IP `default_server` SPA |
 | `nginx/admin.conf` | Day 8+ `app.__DOMAIN__` SPA |
 | `nginx/api.conf` | Day 8+ `api.__DOMAIN__` reverse proxy |
@@ -130,7 +134,7 @@ Optional Day 6 report artifact (PRD §2.3.1):
 | `pm2/ecosystem.config.cjs` | API + web process file (Ram / paired) |
 | `artifacts/` | Built zip output (gitignored) |
 
-Also see Ram’s EC2 helpers: `Backend/docs/DAY8_EC2.md`, `Backend/infra/`.
+Also see Ram’s EC2 helpers: `Backend/docs/DAY8_EC2.md`, `Backend/docs/DAY9_EC2.md`, `Backend/infra/`.
 
 
 ---
@@ -160,3 +164,18 @@ Full guide: **[`day-8.md`](./day-8.md)** · checklist: **[`dns-checklist.md`](./
 5. Close public SG port **4000**
 
 **Day 8 stop:** all three hostnames work over **HTTP**. No certbot yet (Day 9).
+
+---
+
+## Day 9 preview (do not block Day 8)
+
+Full guide: **[`day-9.md`](./day-9.md)** · checklist: **[`https-checklist.md`](./https-checklist.md)** · Ram: **`Backend/docs/DAY9_EC2.md`**
+
+1. Open SG **443**; keep **80** (certbot HTTP-01)
+2. `export DOMAIN=… CERTBOT_EMAIL=…` → `09-certbot-ssl.sh`
+3. Switch `.env` to `https://` origins → `pm2 restart all`
+4. Rebuild admin with `VITE_API_URL=https://api.yourdomain.com`
+5. Point Razorpay webhook at `https://api.…/webhooks/razorpay`
+6. Full test payment on HTTPS
+
+**Day 9 stop:** SSL + live webhook + successful test payment. No Day 10 auto-stop/backups yet.

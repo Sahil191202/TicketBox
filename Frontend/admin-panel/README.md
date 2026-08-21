@@ -28,3 +28,4 @@ Upload **`dist/` contents** to EC2 path **`/var/www/admin`**.
 - Day 6 SSH/SFTP: [`../../deploy/README.md`](../../deploy/README.md)
 - Day 7 nginx + CORS: [`../../deploy/day-7.md`](../../deploy/day-7.md)
 - Day 8 domain + DNS: [`../../deploy/day-8.md`](../../deploy/day-8.md)
+- Day 9 HTTPS: [`../../deploy/day-9.md`](../../deploy/day-9.md)

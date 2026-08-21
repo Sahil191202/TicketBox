@@ -123,3 +123,5 @@ Browser:
 Day 8 ends when all three hostnames resolve and work over **HTTP**.
 
 **Day 9:** certbot HTTPS for all three + Razorpay webhook → `https://api.…/webhooks/razorpay`.
+
+Day 9 guide: [`day-9.md`](./day-9.md)

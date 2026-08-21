@@ -91,6 +91,10 @@ pm2 restart all
 
 Webhook URL must be `https://api.<domain>/webhooks/razorpay` (not cloudflared).
 
+Sahil admin rebuild: `VITE_API_URL=https://api.<domain>` → upload `dist/` to `/var/www/admin`.
+
+Full guides: `docs/DAY9_EC2.md`, monorepo `deploy/day-9.md`.
+
 ---
 
 ## Later (stubs)
