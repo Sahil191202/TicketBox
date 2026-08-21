@@ -165,3 +165,21 @@ bash infra/scripts/10-print-https-env.sh
 
 Full checklist: `docs/DAY9_EC2.md`  
 Sahil side: monorepo `deploy/day-9.md`, `deploy/https-checklist.md`
+
+## Day 10 (auto-stop, backups, wrap-up)
+
+```bash
+# Lambda: see infra/lambda/ec2-schedule/README.md
+
+# DB dump (on EC2)
+cd ~/ticketbox/Backend
+set -a && source .env && set +a
+export BACKUP_S3_URI=s3://YOUR_BACKUP_BUCKET/ticketbox/db/
+bash infra/scripts/11-pg-dump-backup.sh
+
+# Optional restore drill
+# bash infra/scripts/12-restore-from-dump.sh /var/backups/ticketbox/ticketbox-YYYY-MM-DD.dump
+```
+
+Docs: `docs/DAY10_EC2.md`, `ARCHITECTURE.md`, `COST_REPORT.md`, `BUDGET_PROOF.md`, `TEARDOWN.md`  
+Sahil: monorepo `deploy/day-10.md`, `deploy/wrapup-checklist.md`

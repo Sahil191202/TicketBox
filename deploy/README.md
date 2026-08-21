@@ -123,6 +123,8 @@ Optional Day 6 report artifact (PRD §2.3.1):
 | `dns-checklist.md` | Tick-box Day 8 checklist |
 | `day-9.md` | certbot HTTPS + live webhook/payment |
 | `https-checklist.md` | Tick-box Day 9 checklist |
+| `day-10.md` | auto-stop, backups, cost/teardown wrap-up |
+| `wrapup-checklist.md` | Tick-box Day 10 checklist |
 | `scripts/enable-admin-nginx.sh` | Day 7 — IP-only admin site |
 | `scripts/enable-domain-nginx.sh` | Day 8 — apex / api / app vhosts |
 | `scripts/certbot-ssl.sh` | Day 9 — wrapper → Backend certbot script |
@@ -134,7 +136,7 @@ Optional Day 6 report artifact (PRD §2.3.1):
 | `pm2/ecosystem.config.cjs` | API + web process file (Ram / paired) |
 | `artifacts/` | Built zip output (gitignored) |
 
-Also see Ram’s EC2 helpers: `Backend/docs/DAY8_EC2.md`, `Backend/docs/DAY9_EC2.md`, `Backend/infra/`.
+Also see Ram’s EC2 helpers: `Backend/docs/DAY8_EC2.md`, `Backend/docs/DAY9_EC2.md`, `Backend/docs/DAY10_EC2.md`, `Backend/infra/`.
 
 
 ---
@@ -179,3 +181,16 @@ Full guide: **[`day-9.md`](./day-9.md)** · checklist: **[`https-checklist.md`](
 6. Full test payment on HTTPS
 
 **Day 9 stop:** SSL + live webhook + successful test payment. No Day 10 auto-stop/backups yet.
+
+---
+
+## Day 10 preview (do not block Day 9)
+
+Full guide: **[`day-10.md`](./day-10.md)** · checklist: **[`wrapup-checklist.md`](./wrapup-checklist.md)** · Ram: **`Backend/docs/DAY10_EC2.md`**
+
+1. Deploy Lambda + EventBridge stop/start (`infra/lambda/ec2-schedule/`)
+2. Run `11-pg-dump-backup.sh` (+ cron / S3)
+3. Fill cost + budget proof; keep architecture + teardown docs
+4. Panic path lives in polished `RUNBOOK.md`
+
+**Day 10 stop:** wrap-up pack ready. No Day 11 features — submit / teardown per PRD.
