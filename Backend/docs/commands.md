@@ -148,7 +148,8 @@ bash infra/scripts/08-print-domain-env.sh
 # dig yourdomain.com +short
 ```
 
-Full checklist: `docs/DAY8_EC2.md`
+Full checklist: `docs/DAY8_EC2.md`  
+Sahil side: monorepo `deploy/day-8.md`, `deploy/dns-checklist.md`
 
 ## Day 9 (HTTPS + live webhook + payment)
 
@@ -162,4 +163,5 @@ bash infra/scripts/10-print-https-env.sh
 # Rebuild admin: VITE_API_URL=https://api.DOMAIN
 ```
 
-Full checklist: `docs/DAY9_EC2.md`
+Full checklist: `docs/DAY9_EC2.md`  
+Sahil side: monorepo `deploy/day-9.md`, `deploy/https-checklist.md`
