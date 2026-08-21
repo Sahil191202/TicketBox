@@ -94,6 +94,8 @@ No mixed-content warnings in the browser (all `https://`).
 
 **Day 10:** Lambda auto-stop, pg_dump cron, budget proof, RUNBOOK polish, architecture diagram, cost report, teardown checklist.
 
+Full guide: [`DAY10_EC2.md`](./DAY10_EC2.md)
+
 ---
 
 ## Files

@@ -126,3 +126,5 @@ No mixed-content warnings in DevTools.
 Day 9 ends when HTTPS works on all three hosts and a **full test payment** succeeds with the live webhook.
 
 **Day 10:** Lambda auto-stop, pg_dump cron, budget proof, architecture diagram, cost report, teardown.
+
+Day 10 guide: [`day-10.md`](./day-10.md)
