@@ -1,0 +1,25 @@
+# Keys — never commit
+*.pem
+*.ppk
+
+# Env
+.env
+.env.local
+.env.production
+!.env.example
+!.env.production.example
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Node
+node_modules/
+dist/
+Frontend/admin-panel/dist/
+
+# Deploy build artifacts (zip)
+deploy/artifacts/*
+!deploy/artifacts/.gitkeep
