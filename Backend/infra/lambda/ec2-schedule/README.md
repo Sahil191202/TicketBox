@@ -6,11 +6,14 @@ Stops the TicketBox EC2 at night and starts it in the morning so the Elastic IP 
 
 1. **IAM role** for Lambda (`ticketbox-ec2-scheduler-role`)
    - Trust: `lambda.amazonaws.com`
-   - Permissions:
-     - `ec2:StartInstances`, `ec2:StopInstances`, `ec2:DescribeInstances` on your instance ARN
-     - `logs:CreateLogGroup`, `logs:CreateLogStream`, `logs:PutLogEvents`
+   - Permissions (**scoped — auto-fail if you use EC2FullAccess**):
+     - `ec2:StartInstances`, `ec2:StopInstances` on  
+       `arn:aws:ec2:ap-south-1:<account-id>:instance/<instance-id>`
+     - Optional: `ec2:DescribeInstances` on that instance (or account EC2 read for debugging)
+     - `logs:CreateLogGroup`, `logs:CreateLogStream`, `logs:PutLogEvents`  
+       (or managed `AWSLambdaBasicExecutionRole`)
 2. **Lambda function**
-   - Runtime: Python 3.12
+   - Runtime: Python 3.12 (or Node — same idea)
    - Handler: `handler.handler`
    - Upload `handler.py` (zip single file or use inline editor)
    - Env:
@@ -21,10 +24,10 @@ Stops the TicketBox EC2 at night and starts it in the morning so the Elastic IP 
 
 | Name | Schedule (UTC examples) | Input |
 |---|---|---|
-| `ticketbox-ec2-stop` | `cron(30 17 * * ? *)` ≈ 11:00 PM IST | `{"action":"stop"}` |
+| `ticketbox-ec2-stop` | `cron(30 15 ? * MON-FRI *)` ≈ 9:00 PM IST (PRD) | `{"action":"stop"}` |
 | `ticketbox-ec2-start` | `cron(30 2 * * ? *)` ≈ 8:00 AM IST | `{"action":"start"}` |
 
-Convert IST → UTC carefully for your course window.
+Convert IST → UTC carefully for your course window. Alternate stop: `cron(30 17 * * ? *)` ≈ 11:00 PM IST.
 
 4. **Test**
    - Lambda → Test with `{"action":"stop"}` then `{"action":"start"}`

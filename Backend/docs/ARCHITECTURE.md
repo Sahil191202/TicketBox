@@ -16,13 +16,11 @@ flowchart TB
 
   subgraph EC2["EC2 + Elastic IP"]
     Nginx["nginx :80/:443"]
-    Web["PM2 ticketbox-web :3000<br/>EJS public site"]
-    Api["PM2 ticketbox-api :4000<br/>Express JSON API"]
+    Web["PM2 web :3000<br/>EJS public site"]
+    Api["PM2 api :4000<br/>Express JSON API"]
     PG[("PostgreSQL")]
     Nginx --> Web
     Nginx --> Api
-    Web --> Api
-    Api --> PG
   end
 
   subgraph AWSExtras["AWS around the box"]
@@ -42,6 +40,8 @@ flowchart TB
   AppHost --> Nginx
   ApiHost --> Nginx
 
+  Web --> PG
+  Api --> PG
   Api --> S3Banners
   Cron["cron pg_dump"] --> PG
   Cron --> S3Backups
@@ -53,11 +53,11 @@ flowchart TB
 
 | URL | nginx | Upstream |
 |---|---|---|
-| `https://yourdomain.com` | `ticketbox-web` | `127.0.0.1:3000` |
+| `https://yourdomain.com` | `ticketbox-web` | `127.0.0.1:3000` (EJS reads Postgres directly) |
 | `https://api.yourdomain.com` | `ticketbox-api` | `127.0.0.1:4000` |
 | `https://app.yourdomain.com` | static `/var/www/admin` | Vite `dist/` |
 
-Admin SPA calls the API via baked-in `VITE_API_URL` (HTTPS on Day 9). CORS allows `WEB_ORIGIN` / `ADMIN_ORIGIN`.
+Admin SPA and public checkout call the API via `VITE_API_URL` / `API_PUBLIC_URL`. CORS allows `WEB_ORIGIN` / `ADMIN_ORIGIN`.
 
 ## Money / safety controls (Day 10)
 

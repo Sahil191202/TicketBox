@@ -163,7 +163,23 @@ bash infra/scripts/10-print-https-env.sh
 # Rebuild admin: VITE_API_URL=https://api.DOMAIN
 ```
 
-Full checklist: `docs/DAY9_EC2.md`  
+Full checklist: `docs/DAY9_EC2.md`
+
+## Day 10 (auto-stop, backups, wrap-up docs)
+
+```bash
+# On EC2 — one backup now
+set -a && source .env && set +a
+export BACKUP_S3_URI=s3://YOUR_BACKUP_BUCKET/ticketbox/db/
+bash infra/scripts/11-pg-dump-backup.sh
+
+# Lambda: zip + upload Backend/infra/lambda/ec2-schedule/handler.py
+# EventBridge: stop + start with {"action":"stop"|"start"}
+# Fill COST_REPORT.md / BUDGET_PROOF.md with screenshots (do not commit secrets)
+```
+
+Full checklist: `docs/DAY10_EC2.md`  
+Also: `docs/FTP_VS_RSYNC.md`, `docs/ARCHITECTURE.md`, `docs/TEARDOWN.md`
 Sahil side: monorepo `deploy/day-9.md`, `deploy/https-checklist.md`
 
 ## Day 10 (auto-stop, backups, wrap-up)

@@ -9,6 +9,7 @@
 | Architecture diagram | `docs/ARCHITECTURE.md` | — |
 | Cost / budget proof | `docs/COST_REPORT.md`, `BUDGET_PROOF.md` | Console screenshots |
 | Teardown checklist | `docs/TEARDOWN.md` | Execute later if required |
+| FTP vs rsync (graded) | `docs/FTP_VS_RSYNC.md` | — |
 | RUNBOOK polish | `docs/RUNBOOK.md` | — |
 
 **Not Day 10:** building new product features. Stop when the wrap-up artifacts above exist and the auto-stop + backup paths are documented/runnable.
@@ -28,14 +29,17 @@
 Code: `Backend/infra/lambda/ec2-schedule/handler.py`  
 Deploy notes: `Backend/infra/lambda/ec2-schedule/README.md`
 
-Suggested schedule (Asia/Kolkata):
+Suggested schedule (Asia/Kolkata) — **align with your course**; PRD example was ~9:00 PM IST weekdays:
 
-| Rule | Action | Example |
-|---|---|---|
-| Evening | **stop** instance | `cron(30 17 * * ? *)` UTC ≈ 11:00 PM IST |
-| Morning | **start** instance | `cron(30 2 * * ? *)` UTC ≈ 8:00 AM IST |
+| Rule | Action | Example (UTC) | ≈ IST |
+|---|---|---|---|
+| Evening | **stop** | `cron(30 15 ? * MON-FRI *)` | 9:00 PM IST (PRD) |
+| Morning | **start** | `cron(30 2 * * ? *)` | 8:00 AM IST |
 
-Adjust times to your course rules. After start, confirm:
+Or evening `cron(30 17 * * ? *)` ≈ 11:00 PM IST if the course allows. Convert IST → UTC carefully.
+
+**Auto-fail:** do **not** attach `AmazonEC2FullAccess` / `AdministratorAccess` to the Lambda role — only `ec2:StopInstances` + `ec2:StartInstances` (+ optional `DescribeInstances`) on **this instance ARN**, plus basic CloudWatch logs.
+
 
 ```bash
 ssh … 'pm2 status && sudo systemctl status nginx --no-pager'

@@ -139,3 +139,4 @@ bash infra/scripts/12-restore-from-dump.sh /var/backups/ticketbox/ticketbox-YYYY
 | Health | `curl -s https://api.<domain>/health` |
 
 Cost / budget / teardown: [`COST_REPORT.md`](./COST_REPORT.md), [`BUDGET_PROOF.md`](./BUDGET_PROOF.md), [`TEARDOWN.md`](./TEARDOWN.md), [`DAY10_EC2.md`](./DAY10_EC2.md).
+Deploy process note: [`FTP_VS_RSYNC.md`](./FTP_VS_RSYNC.md).
