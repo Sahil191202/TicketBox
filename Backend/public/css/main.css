@@ -1187,61 +1187,89 @@ textarea.field__input {
 }
 
 
-.checkout__summary,
-.confirmation__ticket,
-.booking-lookup__result {
-  background: var(--tb-surface);
-  border: 1px solid var(--tb-line);
-  border-radius: 0.5rem;
-  padding: 1.25rem;
-  margin-bottom: 1.5rem;
-  max-width: 28rem;
+.field__input-wrap {
+  position: relative;
+  border-radius: var(--r-sm);
 }
 
-.checkout__form {
-  max-width: 28rem;
+.field__icon {
+  position: absolute;
+  left: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--c-text-secondary);
+  font-size: 20px;
+  pointer-events: none;
 }
 
-.checkout__error {
-  color: #8b1e1e;
-  margin: 0 0 1rem;
+.field__input--icon {
+  padding-left: 2.5rem;
 }
 
-.checkout__facts,
-.confirmation__facts {
+.checkout__intro {
+  margin-bottom: var(--sp-6);
+}
+
+.checkout__summary {
+  background: var(--c-surface-low);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  padding: var(--sp-5);
+  margin-bottom: var(--sp-6);
+}
+
+.checkout__event {
+  font-family: var(--f-display);
+  font-size: var(--t-title);
+  font-weight: 700;
+  margin-bottom: var(--sp-2);
+}
+
+.checkout__meta {
+  color: var(--c-text-muted);
+  font-size: var(--t-body-sm);
+  margin-bottom: var(--sp-4);
+}
+
+.checkout__facts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem 1.5rem;
-  margin: 1rem 0 0;
+  gap: var(--sp-3) var(--sp-6);
 }
 
-.checkout__facts dt,
-.confirmation__facts dt {
-  color: var(--tb-muted);
-  font-size: 0.85rem;
+.checkout__facts dt {
+  color: var(--c-text-muted);
+  font-size: var(--t-label);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
-.checkout__facts dd,
-.confirmation__facts dd {
+.checkout__facts dd {
   margin: 0.15rem 0 0;
   font-weight: 700;
 }
 
-.confirmation__code,
-.booking-lookup__result .confirmation__code {
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  margin: 0.25rem 0 1rem;
+.checkout__error {
+  color: var(--c-error);
+  margin: 0 0 var(--sp-4);
+  font-size: var(--t-body-sm);
 }
 
-.confirmation__code-label {
-  margin: 0;
-  color: var(--tb-muted);
-  font-size: 0.85rem;
+.checkout__back {
+  margin-top: var(--sp-6);
+  font-size: var(--t-body-sm);
+}
+
+.booking-lookup__result {
+  margin-top: var(--sp-6);
 }
 
 .btn:disabled {
   opacity: 0.65;
   cursor: not-allowed;
+}
+
+.material-symbols-outlined.filled {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }

@@ -3,7 +3,7 @@
     <a class="site-logo" href="/" aria-label="TicketBox home">Ticket<span>Box</span></a>
     <nav class="site-nav" aria-label="Primary">
       <a class="site-nav__link<%= typeof bodyClass !== 'undefined' && bodyClass === 'page--home' ? ' is-active' : '' %>" href="/">Home</a>
-      <a class="site-nav__link<%= typeof bodyClass !== 'undefined' && bodyClass === 'page--lookup' ? ' is-active' : '' %>" href="/bookings/lookup">My Bookings</a>
+      <a class="site-nav__link<%= typeof bodyClass !== 'undefined' && (bodyClass === 'page--lookup' || bodyClass === 'page--booking-lookup') ? ' is-active' : '' %>" href="/bookings/lookup">My Bookings</a>
     </nav>
   </div>
 </header>
