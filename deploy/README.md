@@ -115,19 +115,82 @@ Optional Day 6 report artifact (PRD §2.3.1):
 
 | Path | Purpose |
 |---|---|
-| `README.md` | This guide |
+| `README.md` | This guide (Day 6) |
 | `sftp-checklist.md` | Tick-box Day 6 checklist |
-| `nginx/admin.conf` | SPA site stub (**enable on Day 7**) |
-| `nginx/api.conf` | API reverse-proxy stub (**Day 7+**) |
-| `nginx/web.conf` | Public EJS reverse-proxy stub (**Day 7+**) |
+| `day-7.md` | nginx SPA + CORS on EC2 IP |
+| `nginx-checklist.md` | Tick-box Day 7 checklist |
+| `day-8.md` | Route 53 + Elastic IP + hostname nginx |
+| `dns-checklist.md` | Tick-box Day 8 checklist |
+| `day-9.md` | certbot HTTPS + live webhook/payment |
+| `https-checklist.md` | Tick-box Day 9 checklist |
+| `day-10.md` | auto-stop, backups, cost/teardown wrap-up |
+| `wrapup-checklist.md` | Tick-box Day 10 checklist |
+| `scripts/enable-admin-nginx.sh` | Day 7 — IP-only admin site |
+| `scripts/enable-domain-nginx.sh` | Day 8 — apex / api / app vhosts |
+| `scripts/certbot-ssl.sh` | Day 9 — wrapper → Backend certbot script |
+| `scripts/print-https-env.sh` | Day 9 — wrapper → HTTPS env printout |
+| `nginx/admin-ip.conf` | Day 7 IP `default_server` SPA |
+| `nginx/admin.conf` | Day 8+ `app.__DOMAIN__` SPA |
+| `nginx/api.conf` | Day 8+ `api.__DOMAIN__` reverse proxy |
+| `nginx/web.conf` | Day 8+ apex/www reverse proxy |
 | `pm2/ecosystem.config.cjs` | API + web process file (Ram / paired) |
 | `artifacts/` | Built zip output (gitignored) |
+
+Also see Ram’s EC2 helpers: `Backend/docs/DAY8_EC2.md`, `Backend/docs/DAY9_EC2.md`, `Backend/docs/DAY10_EC2.md`, `Backend/infra/`.
+
 
 ---
 
 ## Day 7 preview (do not block Day 6)
 
-1. Copy `nginx/admin.conf` → `/etc/nginx/sites-available/admin`
-2. `sudo ln -s ... sites-enabled/` + `sudo nginx -t` + reload
-3. Open `http://YOUR_EC2_PUBLIC_IP` — admin SPA
-4. Ram adds `ADMIN_ORIGIN=http://YOUR_EC2_PUBLIC_IP` to API CORS
+Full guide: **[`day-7.md`](./day-7.md)** · checklist: **[`nginx-checklist.md`](./nginx-checklist.md)**
+
+1. Rebuild admin with `VITE_API_URL=http://YOUR_EC2_PUBLIC_IP:4000` and re-upload `dist/`
+2. Open SG ports **80** + **4000**
+3. Copy `nginx/admin.conf` → sites-available, disable default site, `nginx -t` + reload
+4. Set `ADMIN_ORIGIN=http://YOUR_EC2_PUBLIC_IP` on API and restart
+5. Open `http://YOUR_EC2_PUBLIC_IP` — admin SPA + working login
+
+**Day 7 stop:** SPA on port 80 + CORS OK. No DNS, no certbot yet.
+
+---
+
+## Day 8 preview (do not block Day 7)
+
+Full guide: **[`day-8.md`](./day-8.md)** · checklist: **[`dns-checklist.md`](./dns-checklist.md)** · Ram: **`Backend/docs/DAY8_EC2.md`**
+
+1. Elastic IP + Route 53 A records for apex / www / api / app
+2. `export DOMAIN=…` → `enable-domain-nginx.sh` (or `Backend/infra/scripts/07-…`)
+3. Set HTTP `WEB_ORIGIN` / `ADMIN_ORIGIN` / `API_PUBLIC_URL` → `pm2 restart all`
+4. Rebuild admin with `VITE_API_URL=http://api.yourdomain.com` → re-upload `dist/`
+5. Close public SG port **4000**
+
+**Day 8 stop:** all three hostnames work over **HTTP**. No certbot yet (Day 9).
+
+---
+
+## Day 9 preview (do not block Day 8)
+
+Full guide: **[`day-9.md`](./day-9.md)** · checklist: **[`https-checklist.md`](./https-checklist.md)** · Ram: **`Backend/docs/DAY9_EC2.md`**
+
+1. Open SG **443**; keep **80** (certbot HTTP-01)
+2. `export DOMAIN=… CERTBOT_EMAIL=…` → `09-certbot-ssl.sh`
+3. Switch `.env` to `https://` origins → `pm2 restart all`
+4. Rebuild admin with `VITE_API_URL=https://api.yourdomain.com`
+5. Point Razorpay webhook at `https://api.…/webhooks/razorpay`
+6. Full test payment on HTTPS
+
+**Day 9 stop:** SSL + live webhook + successful test payment. No Day 10 auto-stop/backups yet.
+
+---
+
+## Day 10 preview (do not block Day 9)
+
+Full guide: **[`day-10.md`](./day-10.md)** · checklist: **[`wrapup-checklist.md`](./wrapup-checklist.md)** · Ram: **`Backend/docs/DAY10_EC2.md`**
+
+1. Deploy Lambda + EventBridge stop/start (`infra/lambda/ec2-schedule/`)
+2. Run `11-pg-dump-backup.sh` (+ cron / S3)
+3. Fill cost + budget proof; keep architecture + teardown docs
+4. Panic path lives in polished `RUNBOOK.md`
+
+**Day 10 stop:** wrap-up pack ready. No Day 11 features — submit / teardown per PRD.

@@ -1,28 +1,71 @@
 <section class="home">
-  <div class="home__hero">
+  <%
+    var featured = events.length ? events[0] : null;
+    var featuredBanner = featured ? bannerUrl(featured.banner_key) : null;
+  %>
+
+  <div class="home__hero reveal">
     <div class="home__hero-copy">
-      <p class="tag-category">Live Experiences</p>
-      <h1 class="home__title">Unforgettable Events, Just a Click Away</h1>
-      <p class="home__lede">Pick a workshop or event and book your seat in minutes.</p>
-      <a class="btn btn-primary" href="#upcoming">Explore Now</a>
+      <p class="tag-category home__eyebrow">Live Experiences</p>
+      <h1 class="home__title">Unforgettable Events,<br>Just a Click Away</h1>
+      <p class="home__lede">Pick a workshop or event and book your seat in minutes — secure checkout, instant tickets.</p>
+      <div class="home__hero-actions">
+        <a class="btn btn-primary" href="#upcoming">
+          Explore Now
+          <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
+        </a>
+        <a class="btn btn-ghost" href="/bookings/lookup">My Bookings</a>
+      </div>
+      <% if (events.length) { %>
+        <p class="home__hero-stat">
+          <span class="material-symbols-outlined">confirmation_number</span>
+          <%= events.length %> event<%= events.length === 1 ? '' : 's' %> open now
+        </p>
+      <% } %>
     </div>
+
     <div class="home__hero-visual" aria-hidden="true">
-      <span class="home__trending">🔥 Trending</span>
+      <% if (featuredBanner) { %>
+        <img src="<%= featuredBanner %>" alt="" class="home__hero-img">
+      <% } else { %>
+        <div class="home__hero-placeholder"></div>
+      <% } %>
+      <div class="home__hero-shine"></div>
+      <% if (featured) { %>
+        <div class="home__trending">
+          <span class="material-symbols-outlined filled" style="font-size:16px;">local_fire_department</span>
+          Trending · <%= featured.title %>
+        </div>
+      <% } else { %>
+        <div class="home__trending">
+          <span class="material-symbols-outlined filled" style="font-size:16px;">local_fire_department</span>
+          Trending
+        </div>
+      <% } %>
     </div>
   </div>
 
-  <div class="home__section-head" id="upcoming">
-    <h2 class="home__section-title">Upcoming Experiences</h2>
+  <div class="home__section-head reveal" id="upcoming">
+    <div>
+      <p class="home__section-kicker">This season</p>
+      <h2 class="home__section-title">Upcoming Experiences</h2>
+    </div>
+    <% if (events.length > 4) { %>
+      <a class="home__view-all" href="#upcoming">View all →</a>
+    <% } %>
   </div>
 
   <% if (!events.length) { %>
-    <div class="home__empty" role="status">
+    <div class="home__empty reveal" role="status">
+      <div class="home__empty-icon">
+        <span class="material-symbols-outlined" style="font-size:36px;">event_busy</span>
+      </div>
       <p class="home__empty-title">No published events right now</p>
       <p class="home__empty-text">Check back soon — new dates land here first.</p>
     </div>
   <% } else { %>
     <ul class="event-list">
-      <% events.forEach(function (event) { %>
+      <% events.forEach(function (event, index) { %>
         <%
           var left = seatsLeft(event);
           var pct = event.total_seats > 0 ? (left / event.total_seats) * 100 : 0;
@@ -30,15 +73,16 @@
           var seatsCountClass = 'high';
           if (left <= 0 || pct <= 20) { seatsTone = 'seats-left--critical'; seatsCountClass = 'low'; }
           else if (pct <= 50) { seatsTone = 'seats-left--warn'; seatsCountClass = 'mid'; }
+          var img = bannerUrl(event.banner_key);
         %>
-        <li class="event-list__item">
+        <li class="event-list__item reveal" style="--reveal-delay: <%= Math.min(index, 7) * 60 %>ms">
           <article class="event-card">
             <a class="event-card__link" href="/events/<%= event.slug %>">
               <div class="event-card__media">
-                <% if (bannerUrl(event.banner_key)) { %>
+                <% if (img) { %>
                   <img
                     class="event-card__banner"
-                    src="<%= bannerUrl(event.banner_key) %>"
+                    src="<%= img %>"
                     alt="<%= event.title %>"
                     loading="lazy"
                   >
@@ -49,7 +93,7 @@
               </div>
               <div class="event-card__body">
                 <p class="event-card__meta">
-                  <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;margin-right:4px;">calendar_today</span>
+                  <span class="material-symbols-outlined">calendar_today</span>
                   <time datetime="<%= new Date(event.starts_at).toISOString() %>">
                     <%= formatDate(event.starts_at) %>
                   </time>
@@ -57,8 +101,8 @@
                 <h3 class="event-card__title"><%= event.title %></h3>
                 <div class="event-card__footer">
                   <p class="event-card__seats seats-left <%= seatsTone %>">
+                    Seats left
                     <span class="seats-count <%= seatsCountClass %>"><%= left %></span>
-                    seat<%= left === 1 ? '' : 's' %> left
                   </p>
                   <span class="event-card__cta">Buy Now</span>
                 </div>

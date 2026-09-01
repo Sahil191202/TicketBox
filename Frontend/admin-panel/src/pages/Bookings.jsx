@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import { api, toRupees } from '../lib/api';
+import { useDebouncedValue } from '../lib/useDebouncedValue';
 
 const PAGE_SIZE = 10;
 
@@ -60,9 +61,13 @@ function exportCsv(rows) {
 export default function Bookings() {
   const [page, setPage] = useState(1);
   const [q, setQ] = useState('');
-  const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const search = useDebouncedValue(q.trim(), 300);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, status]);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['bookings', page, search, status],
@@ -88,12 +93,6 @@ export default function Bookings() {
     const end = Math.min(pagination.page * PAGE_SIZE, pagination.total);
     return `Showing ${start} to ${end} of ${pagination.total} entries`;
   }, [pagination]);
-
-  const applySearch = (e) => {
-    e.preventDefault();
-    setPage(1);
-    setSearch(q.trim());
-  };
 
   return (
     <div>
@@ -127,20 +126,21 @@ export default function Bookings() {
         </div>
       </div>
 
-      <form onSubmit={applySearch} className="mb-md">
+      <div className="mb-md">
         <div className="relative flex items-center input-glow rounded-full border border-outline-variant bg-surface-container-lowest max-w-xl">
           <span className="material-symbols-outlined text-on-surface-variant absolute left-sm text-[20px]">
             search
           </span>
           <input
-            type="text"
+            type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             className="w-full h-[40px] pl-[40px] pr-md rounded-full bg-transparent text-on-surface font-body-sm text-body-sm placeholder:text-on-surface-variant/60 focus:outline-none"
             placeholder="Search bookings by name or email..."
+            autoComplete="off"
           />
         </div>
-      </form>
+      </div>
 
       {showFilters && (
         <div className="border border-outline-variant rounded-xl p-md bg-surface-container-lowest flex flex-wrap gap-md mb-md">

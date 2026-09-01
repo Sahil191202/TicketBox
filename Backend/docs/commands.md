@@ -118,3 +118,68 @@ sudo ufw status
 ```
 
 Full checklist: `docs/DAY6_EC2.md`
+
+## Day 7 (Node + PM2 + nginx → EJS on :80)
+
+```bash
+# On EC2, in Backend/
+bash infra/scripts/day7-bootstrap.sh
+
+pm2 status
+curl -sI http://127.0.0.1/ | head
+# Browser: http://YOUR_EC2_PUBLIC_IP → EJS home
+
+# Survive reboot
+pm2 startup
+pm2 save
+```
+
+Full checklist: `docs/DAY7_EC2.md`  
+Sahil admin SPA on IP (optional/conflict): monorepo `deploy/day-7.md`
+
+## Day 8 (Domain + Route 53 + Elastic IP)
+
+```bash
+# After DNS A records point at Elastic IP:
+export DOMAIN=yourdomain.com
+bash infra/scripts/07-enable-domain-nginx.sh
+bash infra/scripts/08-print-domain-env.sh
+# Update .env origins → pm2 restart all
+# dig yourdomain.com +short
+```
+
+Full checklist: `docs/DAY8_EC2.md`  
+Sahil side: monorepo `deploy/day-8.md`, `deploy/dns-checklist.md`
+
+## Day 9 (HTTPS + live webhook + payment)
+
+```bash
+export DOMAIN=yourdomain.com
+export CERTBOT_EMAIL=you@example.com
+bash infra/scripts/09-certbot-ssl.sh
+bash infra/scripts/10-print-https-env.sh
+# Update .env to https:// → pm2 restart all
+# Razorpay webhook → https://api.DOMAIN/webhooks/razorpay
+# Rebuild admin: VITE_API_URL=https://api.DOMAIN
+```
+
+Full checklist: `docs/DAY9_EC2.md`  
+Sahil side: monorepo `deploy/day-9.md`, `deploy/https-checklist.md`
+
+## Day 10 (auto-stop, backups, wrap-up)
+
+```bash
+# Lambda: see infra/lambda/ec2-schedule/README.md
+
+# DB dump (on EC2)
+cd ~/ticketbox/Backend
+set -a && source .env && set +a
+export BACKUP_S3_URI=s3://YOUR_BACKUP_BUCKET/ticketbox/db/
+bash infra/scripts/11-pg-dump-backup.sh
+
+# Optional restore drill
+# bash infra/scripts/12-restore-from-dump.sh /var/backups/ticketbox/ticketbox-YYYY-MM-DD.dump
+```
+
+Docs: `docs/DAY10_EC2.md`, `ARCHITECTURE.md`, `COST_REPORT.md`, `BUDGET_PROOF.md`, `TEARDOWN.md`  
+Sahil: monorepo `deploy/day-10.md`, `deploy/wrapup-checklist.md`

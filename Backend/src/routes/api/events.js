@@ -7,6 +7,7 @@ const {
   createEventSchema,
   updateEventSchema,
   paginationSchema,
+  adminEventsQuerySchema,
 } = require('../../schemas/events.schema');
 const { asyncHandler } = require('../../middleware/errorHandler');
 
@@ -25,7 +26,7 @@ router.get(
   '/admin/events',
   authenticate,
   requireRole('admin'),
-  validate(paginationSchema, { source: 'query' }),
+  validate(adminEventsQuerySchema, { source: 'query' }),
   asyncHandler(eventsController.listAdmin)
 );
 router.post(

@@ -1,113 +1,147 @@
+<%
+  var left = seatsLeft(event);
+  var pct = event.total_seats > 0 ? (left / event.total_seats) * 100 : 0;
+  var seatsTone = 'seats-left--ok';
+  if (left <= 0 || pct <= 20) seatsTone = 'seats-left--critical';
+  else if (pct <= 50) seatsTone = 'seats-left--warn';
+  var img = bannerUrl(event.banner_key);
+%>
+
 <article class="event-detail">
-  <a class="event-detail__back" href="/">← All events</a>
-
-  <%
-    var left = seatsLeft(event);
-    var pct = event.total_seats > 0 ? (left / event.total_seats) * 100 : 0;
-    var seatsTone = 'seats-left--ok';
-    if (left <= 0 || pct <= 20) seatsTone = 'seats-left--critical';
-    else if (pct <= 50) seatsTone = 'seats-left--warn';
-  %>
-
-  <% if (bannerUrl(event.banner_key)) { %>
-    <figure class="event-detail__banner">
+  <section class="event-detail__hero<%= img ? '' : ' event-detail__hero--placeholder' %>">
+    <% if (img) { %>
       <img
-        class="event-detail__banner-img"
-        src="<%= bannerUrl(event.banner_key) %>"
+        class="event-detail__hero-img"
+        src="<%= img %>"
         alt="<%= event.title %>"
       >
-      <div class="event-detail__banner-content">
-        <p class="tag-category">Event</p>
+    <% } %>
+    <div class="event-detail__hero-shade"></div>
+    <div class="event-detail__hero-inner">
+      <a class="event-detail__back" href="/">
+        <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span>
+        All events
+      </a>
+      <div class="event-detail__hero-copy reveal">
+        <p class="tag-category">Live Event</p>
         <h1 class="event-detail__title"><%= event.title %></h1>
         <p class="event-detail__meta">
+          <span class="material-symbols-outlined" style="font-size:18px;">calendar_today</span>
           <time datetime="<%= new Date(event.starts_at).toISOString() %>">
             <%= formatDate(event.starts_at) %>
           </time>
-        </p>
-      </div>
-    </figure>
-  <% } else { %>
-    <div class="event-detail__banner event-detail__banner--placeholder">
-      <div class="event-detail__banner-content">
-        <p class="tag-category">Event</p>
-        <h1 class="event-detail__title"><%= event.title %></h1>
-        <p class="event-detail__meta">
-          <time datetime="<%= new Date(event.starts_at).toISOString() %>">
-            <%= formatDate(event.starts_at) %>
-          </time>
+          <span class="event-detail__meta-dot"></span>
+          <span class="seats-left <%= seatsTone %>">
+            <%= left %> seat<%= left === 1 ? '' : 's' %> left
+          </span>
         </p>
       </div>
     </div>
-  <% } %>
+  </section>
 
-  <div class="event-detail__layout">
-    <div class="event-detail__body">
-      <h2 class="home__section-title">About This Event</h2>
-      <p class="event-detail__description"><%= event.description || 'No description yet.' %></p>
+  <div class="event-detail__content">
+    <div class="event-detail__layout">
+      <div class="event-detail__body reveal">
+        <h2 class="home__section-title">About This Event</h2>
+        <p class="event-detail__description"><%= event.description || 'No description yet.' %></p>
 
-      <dl class="event-detail__facts">
-        <div class="event-detail__fact">
-          <dt>Price per ticket</dt>
-          <dd><%= formatPrice(event.price_paise) %></dd>
+        <dl class="event-detail__facts">
+          <div class="event-detail__fact">
+            <dt>
+              <span class="material-symbols-outlined">sell</span>
+              Price per ticket
+            </dt>
+            <dd><%= formatPrice(event.price_paise) %></dd>
+          </div>
+          <div class="event-detail__fact">
+            <dt>
+              <span class="material-symbols-outlined">event_seat</span>
+              Seats left
+            </dt>
+            <dd class="seats-left <%= seatsTone %>">
+              <span class="seats-left__count"><%= left %></span>
+              <span class="seats-left__total"> / <%= event.total_seats %></span>
+            </dd>
+          </div>
+          <div class="event-detail__fact">
+            <dt>
+              <span class="material-symbols-outlined">schedule</span>
+              Starts
+            </dt>
+            <dd><%= formatDate(event.starts_at) %></dd>
+          </div>
+          <div class="event-detail__fact">
+            <dt>
+              <span class="material-symbols-outlined">confirmation_number</span>
+              Status
+            </dt>
+            <dd><span class="badge badge-published">On sale</span></dd>
+          </div>
+        </dl>
+      </div>
+
+      <section class="booking-form reveal reveal--delay" aria-labelledby="booking-heading">
+        <div class="booking-form__head">
+          <p class="input-label">Starting from</p>
+          <p class="booking-form__price"><%= formatPrice(event.price_paise) %><span>/ticket</span></p>
+          <h2 class="booking-form__title" id="booking-heading">Book tickets</h2>
         </div>
-        <div class="event-detail__fact">
-          <dt>Seats left</dt>
-          <dd class="seats-left <%= seatsTone %>">
-            <span class="seats-left__count"><%= left %></span>
-            <span class="seats-left__total"> / <%= event.total_seats %></span>
-          </dd>
-        </div>
-      </dl>
+
+        <% if (left > 0 && left <= Math.ceil(event.total_seats * 0.2)) { %>
+          <p class="booking-form__demand">
+            <span class="material-symbols-outlined" style="font-size:18px;">warning</span>
+            High demand — only <%= left %> seats left
+          </p>
+        <% } %>
+
+        <% if (left <= 0) { %>
+          <p class="booking-form__soldout">Sold out</p>
+        <% } else { %>
+          <form class="booking-form__form" method="get" action="/checkout">
+            <input type="hidden" name="event_id" value="<%= event.id %>">
+            <input type="hidden" name="slug" value="<%= event.slug %>">
+
+            <label class="field">
+              <span class="field__label">Full Name</span>
+              <input class="field__input" type="text" name="customer_name" required autocomplete="name" placeholder="Your full name">
+            </label>
+
+            <label class="field">
+              <span class="field__label">Email</span>
+              <input class="field__input" type="email" name="email" required autocomplete="email" placeholder="you@example.com">
+            </label>
+
+            <label class="field">
+              <span class="field__label">Phone</span>
+              <input class="field__input" type="tel" name="phone" required autocomplete="tel" placeholder="10-digit mobile">
+            </label>
+
+            <label class="field">
+              <span class="field__label">Quantity</span>
+              <div class="qty-stepper">
+                <input
+                  class="field__input"
+                  type="number"
+                  name="qty"
+                  min="1"
+                  max="<%= left %>"
+                  value="1"
+                  required
+                >
+              </div>
+            </label>
+
+            <button class="btn btn-primary btn-wide" type="submit">
+              Book Now
+              <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
+            </button>
+            <p class="booking-form__secure">
+              <span class="material-symbols-outlined" style="font-size:16px;">lock</span>
+              Secure transaction · Razorpay test mode
+            </p>
+          </form>
+        <% } %>
+      </section>
     </div>
-
-    <section class="booking-form" aria-labelledby="booking-heading">
-      <p class="input-label">Starting from</p>
-      <p class="booking-form__price"><%= formatPrice(event.price_paise) %>/ticket</p>
-      <h2 class="booking-form__title" id="booking-heading">Book tickets</h2>
-
-      <% if (left > 0 && left <= Math.ceil(event.total_seats * 0.2)) { %>
-        <p class="booking-form__demand">⚠ High demand — only <%= left %> seats left</p>
-      <% } %>
-
-      <% if (left <= 0) { %>
-        <p class="booking-form__soldout">Sold out</p>
-      <% } else { %>
-        <form class="booking-form__form" method="get" action="/checkout">
-          <input type="hidden" name="event_id" value="<%= event.id %>">
-          <input type="hidden" name="slug" value="<%= event.slug %>">
-
-          <label class="field">
-            <span class="field__label">Full Name</span>
-            <input class="field__input" type="text" name="customer_name" required autocomplete="name" placeholder="Your full name">
-          </label>
-
-          <label class="field">
-            <span class="field__label">Email</span>
-            <input class="field__input" type="email" name="email" required autocomplete="email" placeholder="you@example.com">
-          </label>
-
-          <label class="field">
-            <span class="field__label">Phone</span>
-            <input class="field__input" type="tel" name="phone" required autocomplete="tel" placeholder="10-digit mobile">
-          </label>
-
-          <label class="field">
-            <span class="field__label">Quantity</span>
-            <input
-              class="field__input"
-              type="number"
-              name="qty"
-              min="1"
-              max="<%= left %>"
-              value="1"
-              required
-            >
-          </label>
-
-          <button class="btn btn-primary btn-wide" type="submit">Book Now</button>
-          <p class="booking-form__secure">Secure transaction · Razorpay test mode</p>
-        </form>
-      <% } %>
-    </section>
   </div>
 </article>
