@@ -1,7 +1,12 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Calendar, Ticket, Webhook, LogOut } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useAuthStore } from '../store/authStore';
+
+const NAV_ICONS = {
+  Dashboard: 'dashboard',
+  Events: 'calendar_today',
+  Bookings: 'confirmation_number',
+  'Webhook Logs': 'webhook',
+};
 
 export default function Layout() {
   const location = useLocation();
@@ -14,66 +19,99 @@ export default function Layout() {
   };
 
   const navItems = [
-    { name: 'Dashboard', path: '/', icon: LayoutDashboard },
-    { name: 'Events', path: '/events', icon: Calendar },
-    { name: 'Bookings', path: '/bookings', icon: Ticket },
-    { name: 'Webhook Logs', path: '/webhooks', icon: Webhook },
+    { name: 'Dashboard', path: '/' },
+    { name: 'Events', path: '/events' },
+    { name: 'Bookings', path: '/bookings' },
+    { name: 'Webhook Logs', path: '/webhooks' },
   ];
 
-  return (
-    <div className="flex h-screen bg-deepPurple text-white overflow-hidden relative">
-      {/* Decorative background blobs */}
-      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-electricViolet/20 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-hotPink/20 rounded-full blur-3xl pointer-events-none"></div>
+  const isActive = (path) => {
+    if (path === '/') return location.pathname === '/' || location.pathname === '/dashboard';
+    return location.pathname.startsWith(path);
+  };
 
-      {/* Sidebar */}
-      <aside className="w-64 glass-panel flex flex-col relative z-10 border-r border-white/10">
-        <div className="h-20 flex items-center px-6 border-b border-white/10">
-          <h1 className="text-2xl font-extrabold text-gradient tracking-wider">TicketBox</h1>
+  return (
+    <div className="flex min-h-screen bg-background text-on-background font-body-md">
+      <nav className="hidden md:flex flex-col fixed left-0 top-0 h-full w-64 border-r border-outline-variant bg-surface-container-low p-md gap-lg z-40">
+        <div className="mb-lg">
+          <h1 className="font-headline-md text-headline-md font-bold text-primary">
+            TicketBox Admin
+          </h1>
+          <p className="font-body-sm text-body-sm text-on-surface-variant mt-xs">
+            Management Console
+          </p>
         </div>
-        <nav className="flex-1 px-4 py-6 space-y-2 relative">
+
+        <div className="flex flex-col gap-xs flex-1">
           {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path));
+            const active = isActive(item.path);
             return (
               <Link
                 key={item.name}
                 to={item.path}
-                className={`relative flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors z-10 ${
-                  isActive ? 'text-white' : 'text-gray-400 hover:text-white'
+                className={`flex items-center gap-sm px-sm py-sm rounded-lg font-body-sm text-body-sm transition-colors ${
+                  active
+                    ? 'bg-primary-container text-on-primary font-bold'
+                    : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface'
                 }`}
               >
-                {isActive && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-electricViolet rounded-xl -z-10 shadow-[0_0_15px_rgba(124,58,237,0.5)]"
-                    initial={false}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  />
-                )}
-                <Icon className={`mr-3 h-5 w-5 ${isActive ? 'text-white' : 'text-gray-400'}`} />
+                <span className="material-symbols-outlined text-[20px]">
+                  {NAV_ICONS[item.name]}
+                </span>
                 {item.name}
               </Link>
             );
           })}
-        </nav>
-        <div className="p-4 border-t border-white/10">
-          <button 
+        </div>
+
+        <div className="mt-auto pt-md border-t border-outline-variant space-y-sm">
+          <Link to="/events/create" className="btn-admin-cta">
+            <span className="material-symbols-outlined text-[18px] mr-xs">add</span>
+            Create Event
+          </Link>
+          <button
+            type="button"
             onClick={handleLogout}
-            className="flex w-full items-center px-4 py-3 text-sm font-medium text-gray-400 rounded-xl hover:bg-white/5 hover:text-hotPink transition-colors group"
+            className="flex w-full items-center gap-sm px-sm py-sm rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container-high hover:text-error transition-colors"
           >
-            <LogOut className="mr-3 h-5 w-5 group-hover:text-hotPink transition-colors" />
+            <span className="material-symbols-outlined text-[20px]">logout</span>
             Logout
           </button>
         </div>
-      </aside>
+      </nav>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-auto relative z-10">
-        <div className="p-8 h-full">
-          <Outlet />
-        </div>
-      </main>
+      <div className="flex flex-col flex-1 md:ml-64 min-w-0">
+        <header className="sticky top-0 z-50 bg-surface border-b border-outline-variant flex items-center justify-between px-lg h-14">
+          <div className="relative flex items-center input-glow rounded-full border border-outline-variant bg-surface-container-lowest flex-1 max-w-md">
+            <span className="material-symbols-outlined text-on-surface-variant absolute left-sm text-[20px]">
+              search
+            </span>
+            <input
+              type="text"
+              className="w-full h-[40px] pl-[40px] pr-md rounded-full bg-transparent text-on-surface font-body-sm text-body-sm placeholder:text-on-surface-variant/60 focus:outline-none"
+              placeholder="Search events..."
+              readOnly
+            />
+          </div>
+          <div className="flex items-center gap-sm ml-md">
+            <button type="button" className="p-sm text-on-surface-variant hover:text-on-surface transition-colors" aria-label="Notifications">
+              <span className="material-symbols-outlined text-[22px]">notifications</span>
+            </button>
+            <button type="button" className="p-sm text-on-surface-variant hover:text-on-surface transition-colors" aria-label="Settings">
+              <span className="material-symbols-outlined text-[22px]">settings</span>
+            </button>
+            <Link to="/events/create" className="hidden sm:inline-flex btn-admin-cta !w-auto px-lg">
+              + Create Event
+            </Link>
+          </div>
+        </header>
+
+        <main className="flex-1 p-lg md:p-xl bg-surface overflow-y-auto">
+          <div className="animate-fade-up">
+            <Outlet />
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

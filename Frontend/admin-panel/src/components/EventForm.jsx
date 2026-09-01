@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Loader2, Ticket, Upload } from 'lucide-react';
+import { Loader2, Ticket } from 'lucide-react';
 import { slugify } from '../lib/api';
 
 const eventSchema = z.object({
@@ -71,7 +71,7 @@ export default function EventForm({ initialData, onSubmit, isSubmitting, isEdit 
           {[...Array(30)].map((_, i) => (
             <div
               key={i}
-              className="absolute bottom-[-10%] animate-ticket-fly text-electricViolet"
+              className="absolute bottom-[-10%] animate-ticket-fly text-primary-container"
               style={{
                 left: `${Math.random() * 100}%`,
                 animationDelay: `${Math.random() * 0.5}s`,
@@ -79,134 +79,92 @@ export default function EventForm({ initialData, onSubmit, isSubmitting, isEdit 
                 transform: `scale(${0.5 + Math.random()})`,
               }}
             >
-              <Ticket
-                size={48}
-                className="drop-shadow-[0_0_10px_rgba(124,58,237,0.8)]"
-              />
+              <Ticket size={48} />
             </div>
           ))}
         </div>
       )}
 
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6 text-gray-200">
-        <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+        <div className="grid grid-cols-1 gap-y-5 gap-x-4 sm:grid-cols-2">
           <div className="sm:col-span-2 opacity-0 animate-slide-up delay-100">
-            <label htmlFor="title" className="block text-sm font-medium">
-              Event Title
-            </label>
-            <div className="mt-1">
-              <input
-                type="text"
-                id="title"
-                {...register('title')}
-                className="block w-full bg-white/5 border border-white/10 rounded-xl py-2 px-3 text-white focus:ring-electricViolet focus:border-electricViolet transition-colors"
-              />
-              {errors.title && (
-                <p className="mt-1 text-sm text-hotPink">{errors.title.message}</p>
-              )}
-            </div>
+            <label htmlFor="title" className="input-label">Event Title</label>
+            <input id="title" type="text" {...register('title')} className="input-field" />
+            {errors.title && <p className="mt-1 text-sm text-error">{errors.title.message}</p>}
           </div>
 
           <div className="sm:col-span-2 opacity-0 animate-slide-up delay-100">
-            <label htmlFor="slug" className="block text-sm font-medium">
-              Slug
-            </label>
-            <div className="mt-1">
-              <input
-                type="text"
-                id="slug"
-                {...register('slug', {
-                  onChange: () => setSlugTouched(true),
-                })}
-                className="block w-full bg-white/5 border border-white/10 rounded-xl py-2 px-3 text-white focus:ring-electricViolet focus:border-electricViolet transition-colors"
-                placeholder="my-event-slug"
-              />
-              {errors.slug && (
-                <p className="mt-1 text-sm text-hotPink">{errors.slug.message}</p>
-              )}
-            </div>
+            <label htmlFor="slug" className="input-label">Slug</label>
+            <input
+              id="slug"
+              type="text"
+              {...register('slug', { onChange: () => setSlugTouched(true) })}
+              className="input-field font-code-ticket"
+              placeholder="my-event-slug"
+            />
+            {errors.slug && <p className="mt-1 text-sm text-error">{errors.slug.message}</p>}
           </div>
 
           <div className="sm:col-span-2 opacity-0 animate-slide-up delay-200">
-            <label htmlFor="description" className="block text-sm font-medium">
-              Description
-            </label>
-            <div className="mt-1">
-              <textarea
-                id="description"
-                rows={4}
-                {...register('description')}
-                className="block w-full bg-white/5 border border-white/10 rounded-xl py-2 px-3 text-white focus:ring-electricViolet focus:border-electricViolet transition-colors"
-              />
-              {errors.description && (
-                <p className="mt-1 text-sm text-hotPink">{errors.description.message}</p>
-              )}
-            </div>
+            <label htmlFor="description" className="input-label">Description</label>
+            <textarea
+              id="description"
+              rows={4}
+              {...register('description')}
+              className="input-field !h-auto py-3"
+            />
+            {errors.description && (
+              <p className="mt-1 text-sm text-error">{errors.description.message}</p>
+            )}
           </div>
 
           <div className="opacity-0 animate-slide-up delay-300">
-            <label htmlFor="price" className="block text-sm font-medium">
-              Price (₹)
-            </label>
-            <div className="mt-1">
-              <input
-                type="number"
-                id="price"
-                step="1"
-                min="0"
-                {...register('price', { valueAsNumber: true })}
-                className="block w-full bg-white/5 border border-white/10 rounded-xl py-2 px-3 text-white focus:ring-electricViolet focus:border-electricViolet transition-colors"
-              />
-              {errors.price && (
-                <p className="mt-1 text-sm text-hotPink">{errors.price.message}</p>
-              )}
-            </div>
+            <label htmlFor="price" className="input-label">Price (₹)</label>
+            <input
+              id="price"
+              type="number"
+              step="1"
+              min="0"
+              {...register('price', { valueAsNumber: true })}
+              className="input-field"
+            />
+            {errors.price && <p className="mt-1 text-sm text-error">{errors.price.message}</p>}
           </div>
 
           <div className="opacity-0 animate-slide-up delay-300">
-            <label htmlFor="totalSeats" className="block text-sm font-medium">
-              Total Seats
-            </label>
-            <div className="mt-1">
-              <input
-                type="number"
-                id="totalSeats"
-                min="1"
-                {...register('totalSeats', { valueAsNumber: true })}
-                className="block w-full bg-white/5 border border-white/10 rounded-xl py-2 px-3 text-white focus:ring-electricViolet focus:border-electricViolet transition-colors"
-              />
-              {errors.totalSeats && (
-                <p className="mt-1 text-sm text-hotPink">{errors.totalSeats.message}</p>
-              )}
-            </div>
+            <label htmlFor="totalSeats" className="input-label">Total Seats</label>
+            <input
+              id="totalSeats"
+              type="number"
+              min="1"
+              {...register('totalSeats', { valueAsNumber: true })}
+              className="input-field"
+            />
+            {errors.totalSeats && (
+              <p className="mt-1 text-sm text-error">{errors.totalSeats.message}</p>
+            )}
           </div>
 
           <div className="opacity-0 animate-slide-up delay-400">
-            <label htmlFor="date" className="block text-sm font-medium">
-              Start Date & Time
-            </label>
-            <div className="mt-1">
-              <input
-                type="datetime-local"
-                id="date"
-                {...register('date')}
-                className="block w-full bg-white/5 border border-white/10 rounded-xl py-2 px-3 text-white focus:ring-electricViolet focus:border-electricViolet transition-colors [color-scheme:dark]"
-              />
-              {errors.date && (
-                <p className="mt-1 text-sm text-hotPink">{errors.date.message}</p>
-              )}
-            </div>
+            <label htmlFor="date" className="input-label">Start Date & Time</label>
+            <input
+              id="date"
+              type="datetime-local"
+              {...register('date')}
+              className="input-field"
+            />
+            {errors.date && <p className="mt-1 text-sm text-error">{errors.date.message}</p>}
           </div>
 
           <div className="opacity-0 animate-slide-up delay-400">
-            <label className="block text-sm font-medium">Banner Image</label>
-            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-white/10 border-dashed rounded-xl hover:border-electricViolet/50 transition-colors bg-white/5">
+            <span className="input-label">Banner Image</span>
+            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed border-outline-variant rounded-xl hover:border-primary-container/50 transition-colors bg-surface-container-low">
               <div className="space-y-1 text-center">
-                <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                <div className="flex text-sm text-gray-400 justify-center">
+                <span className="material-symbols-outlined mx-auto text-[40px] text-on-surface-variant">upload</span>
+                <div className="flex text-sm text-on-surface-variant justify-center">
                   <label
                     htmlFor="banner"
-                    className="relative cursor-pointer rounded-md font-medium text-electricViolet hover:text-hotPink focus-within:outline-none"
+                    className="relative cursor-pointer font-medium text-primary hover:text-surface-tint"
                   >
                     <span>Upload a file</span>
                     <input
@@ -219,32 +177,18 @@ export default function EventForm({ initialData, onSubmit, isSubmitting, isEdit 
                   </label>
                   <p className="pl-1">or drag and drop</p>
                 </div>
-                <p className="text-xs text-gray-500">
-                  PNG, JPG up to 5MB · S3 upload comes Day 5
-                </p>
+                <p className="text-xs text-on-surface-variant">PNG, JPG up to 5MB · S3 upload comes Day 5</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end pt-6 border-t border-white/10 opacity-0 animate-slide-up delay-500">
-          <button
-            type="button"
-            onClick={() => window.history.back()}
-            className="py-2 px-4 rounded-xl text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors mr-3"
-          >
+        <div className="flex justify-end gap-sm pt-lg border-t border-outline-variant opacity-0 animate-slide-up delay-500">
+          <button type="button" onClick={() => window.history.back()} className="btn-ghost">
             Cancel
           </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="inline-flex justify-center items-center py-2 px-6 rounded-xl shadow-[0_0_15px_rgba(124,58,237,0.4)] text-sm font-bold text-white bg-gradient-to-r from-electricViolet to-hotPink hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-electricViolet focus:ring-offset-deepPurple transition-all disabled:opacity-70 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? (
-              <Loader2 className="animate-spin h-5 w-5" />
-            ) : (
-              'Save Event'
-            )}
+          <button type="submit" disabled={isSubmitting} className="btn-primary !rounded-lg">
+            {isSubmitting ? <Loader2 className="animate-spin h-5 w-5" /> : 'Save Event'}
           </button>
         </div>
       </form>

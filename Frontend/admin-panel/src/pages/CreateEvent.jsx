@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import EventForm from '../components/EventForm';
 import { api, toPaise, toIso } from '../lib/api';
@@ -30,27 +29,23 @@ export default function CreateEvent() {
       setTimeout(() => navigate('/events'), 2200);
     },
     onError: (err) => {
-      const message =
+      toast.error(
         err.response?.data?.error ||
-        err.response?.data?.details?.[0] ||
-        'Failed to create event';
-      toast.error(message);
+          err.response?.data?.details?.[0] ||
+          'Failed to create event'
+      );
     },
   });
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-    >
-      <h1 className="text-3xl font-bold text-white mb-8">Create New Event</h1>
-      <div className="glass-panel rounded-2xl p-8">
+    <div>
+      <h1 className="font-headline-md text-headline-md font-bold text-on-surface mb-lg">Create New Event</h1>
+      <div className="admin-card p-xl">
         <EventForm
           onSubmit={(data) => createMutation.mutateAsync(data)}
           isSubmitting={createMutation.isPending}
         />
       </div>
-    </motion.div>
+    </div>
   );
 }

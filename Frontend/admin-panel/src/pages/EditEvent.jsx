@@ -1,6 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import EventForm from '../components/EventForm';
@@ -11,7 +10,6 @@ export default function EditEvent() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  // No GET /admin/events/:id in Day 2 contract — load from list and find by id
   const { data: event, isLoading, isError } = useQuery({
     queryKey: ['event', id],
     queryFn: async () => {
@@ -19,9 +17,7 @@ export default function EditEvent() {
         params: { page: 1, limit: 100 },
       });
       const found = response.data.data.find((e) => String(e.id) === String(id));
-      if (!found) {
-        throw new Error('Event not found');
-      }
+      if (!found) throw new Error('Event not found');
       return {
         title: found.title,
         slug: found.slug,
@@ -53,38 +49,32 @@ export default function EditEvent() {
       setTimeout(() => navigate('/events'), 2200);
     },
     onError: (err) => {
-      const message =
+      toast.error(
         err.response?.data?.error ||
-        err.response?.data?.details?.[0] ||
-        'Failed to update event';
-      toast.error(message);
+          err.response?.data?.details?.[0] ||
+          'Failed to update event'
+      );
     },
   });
 
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <Loader2 className="h-8 w-8 text-electricViolet animate-spin" />
+        <Loader2 className="h-8 w-8 text-primary-container animate-spin" />
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="glass-panel rounded-2xl p-12 text-center text-hotPink">
-        Event not found.
-      </div>
+      <div className="admin-card p-xl text-center text-error">Event not found.</div>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-    >
-      <h1 className="text-3xl font-bold text-white mb-8">Edit Event</h1>
-      <div className="glass-panel rounded-2xl p-8">
+    <div>
+      <h1 className="font-headline-md text-headline-md font-bold text-on-surface mb-lg">Edit Event</h1>
+      <div className="admin-card p-xl">
         <EventForm
           initialData={event}
           isEdit
@@ -92,6 +82,6 @@ export default function EditEvent() {
           isSubmitting={updateMutation.isPending}
         />
       </div>
-    </motion.div>
+    </div>
   );
 }
