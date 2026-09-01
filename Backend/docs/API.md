@@ -250,7 +250,8 @@ Auth required. Paginated webhook log (`page`, `limit`).
 
 ### `GET /admin/upload-url?filename=banner.jpg`
 
-Auth required. Returns S3 presigned PUT URL (scoped to `banners/*`).
+Auth required. Returns S3 presigned PUT URL (scoped to `banners/*`).  
+Browser PUT to this URL requires **S3 bucket CORS** (see `npm run s3:cors`).
 
 ```json
 {
@@ -258,6 +259,20 @@ Auth required. Returns S3 presigned PUT URL (scoped to `banners/*`).
   "key": "banners/....jpg",
   "public_url": "https://.../banners/....jpg",
   "expires_in": 300,
+  "content_type": "image/jpeg"
+}
+```
+
+### `POST /admin/upload`
+
+Auth required. Multipart field `banner` (image ≤ 5MB).  
+API uploads to S3 server-side — **no browser ↔ S3 CORS**. Prefer this from the admin SPA.
+
+Response `201`:
+```json
+{
+  "key": "banners/....jpg",
+  "public_url": "https://.../banners/....jpg",
   "content_type": "image/jpeg"
 }
 ```

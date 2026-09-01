@@ -24,4 +24,4 @@ Ram owns the data wiring. Sahil owns `public/css/main.css`.
 
 Helpers available in every template: `formatPrice(paise)`, `formatDate(date)`, `seatsLeft(event)`.
 
-Banners: set `S3_PUBLIC_BASE_URL` in `.env` when S3 is ready. Image only renders if both base URL and `banner_key` exist.
+Banners: templates use `bannerUrl(event.banner_key)` → `/media/banners/...` (web proxy from private S3). No public bucket required.

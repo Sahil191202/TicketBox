@@ -9,11 +9,11 @@
     else if (pct <= 50) seatsTone = 'seats-left--warn';
   %>
 
-  <% if (event.banner_key && s3PublicBaseUrl) { %>
+  <% if (bannerUrl(event.banner_key)) { %>
     <figure class="event-detail__banner">
       <img
         class="event-detail__banner-img"
-        src="<%= s3PublicBaseUrl %>/<%= event.banner_key %>"
+        src="<%= bannerUrl(event.banner_key) %>"
         alt="<%= event.title %>"
       >
       <div class="event-detail__banner-content">

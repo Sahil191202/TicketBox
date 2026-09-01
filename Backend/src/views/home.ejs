@@ -35,10 +35,10 @@
           <article class="event-card">
             <a class="event-card__link" href="/events/<%= event.slug %>">
               <div class="event-card__media">
-                <% if (event.banner_key && s3PublicBaseUrl) { %>
+                <% if (bannerUrl(event.banner_key)) { %>
                   <img
                     class="event-card__banner"
-                    src="<%= s3PublicBaseUrl %>/<%= event.banner_key %>"
+                    src="<%= bannerUrl(event.banner_key) %>"
                     alt="<%= event.title %>"
                     loading="lazy"
                   >
